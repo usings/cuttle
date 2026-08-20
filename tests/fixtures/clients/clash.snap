@@ -1,0 +1,418 @@
+# Clash Classic — clash · text/yaml; charset=utf-8 · .yaml
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+# Clash Classic does not support VLESS, Hysteria, TUIC, WireGuard or AnyTLS.
+
+━━ anytls — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+proxies:
+  - type: http
+    name: HTTP
+    server: example.com
+    port: 8080
+    username: user
+    password: pass
+    tls: false
+    udp: false
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+proxies:
+  - type: socks5
+    name: Socks5
+    server: example.com
+    port: 1080
+    username: user
+    password: pass
+    udp: true
+
+━━ ss 15/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+proxies: []
+! SS 2022 (ss/tcp) cannot be carried by clash; skipped.
+
+· ss:aes-256-gcm
+proxies:
+  - type: ss
+    name: HK Node
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+
+· ss:base64-uri-list
+proxies:
+  - type: ss
+    name: B64 SS
+    server: b64.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+
+· ss:canonical-json
+proxies:
+  - type: ss
+    name: Canonical SS
+    server: cj.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:egern-yaml
+proxies:
+  - type: ss
+    name: Egern SS
+    server: eg.example.com
+    port: 443
+    udp: true
+    cipher: aes-256-gcm
+    password: pass
+
+· ss:loon-line
+proxies:
+  - type: ss
+    name: Loon SS
+    server: ln.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:mihomo-yaml
+proxies:
+  - name: YAML SS
+    type: ss
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: true
+
+· ss:plugin-obfs
+proxies:
+  - type: ss
+    name: SS OBFS
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:plugin-obfs-uri
+proxies:
+  - type: ss
+    name: SS OBFS URI
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:plugin-v2ray
+proxies:
+  - type: ss
+    name: SS V2Ray
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      host: cdn.example.com
+      path: /ws
+      tls: true
+
+· ss:quantumult-x-line
+proxies:
+  - type: ss
+    name: QX SS
+    server: qx.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:shadow-tls
+proxies:
+  - type: ss
+    name: SS ShadowTLS
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: shadow-tls
+    plugin-opts:
+      host: cdn.example.com
+      password: secret
+      version: 3
+
+· ss:ssd-airport
+proxies:
+  - type: ss
+    name: SSD HK
+    server: ssd1.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: airport-pass
+    udp: true
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:surge-config-section
+proxies:
+  - type: ss
+    name: Section SS
+    server: sec.example.com
+    port: 443
+    cipher: chacha20-ietf-poly1305
+    password: pass
+    udp: true
+  - type: ss
+    name: Section SS 2
+    server: sec.example.com
+    port: 8443
+    cipher: aes-256-gcm
+    password: pass2
+    udp: true
+
+· ss:surge-line
+proxies:
+  - type: ss
+    name: Surge SS
+    server: sg.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+━━ ssh — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+proxies:
+  - type: ssr
+    name: SSR Node
+    server: ssr.example.com
+    port: 8388
+    protocol: auth_aes128_md5
+    cipher: aes-256-cfb
+    obfs: tls1.2_ticket_auth
+    password: password
+    protocol-param: "64"
+    obfs-param: cdn.example.com
+    udp: true
+
+━━ trojan 4/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+proxies:
+  - type: trojan
+    name: Trojan gRPC
+    server: example.com
+    port: 443
+    network: grpc
+    udp: true
+    password: password
+    grpc-opts:
+      grpc-service-name: edge
+    sni: example.com
+
+· trojan:httpupgrade
+proxies: []
+! Upgrade (trojan/httpupgrade) cannot be carried by clash; skipped.
+
+· trojan:no-udp
+proxies:
+  - name: Trojan NoUDP
+    type: trojan
+    server: example.com
+    port: 443
+    password: password
+    udp: false
+    skip-cert-verify: true
+    network: tcp
+    sni: example.com
+
+· trojan:tcp-tls
+proxies:
+  - type: trojan
+    name: Trojan
+    server: example.com
+    port: 443
+    network: tcp
+    udp: true
+    password: password
+    sni: example.com
+
+· trojan:ws-tls
+proxies:
+  - type: trojan
+    name: Trojan WS
+    server: example.com
+    port: 443
+    network: ws
+    udp: true
+    password: password
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    sni: example.com
+
+· trojan:xray-json-httpupgrade
+proxies: []
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by clash; skipped.
+
+━━ tuic — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vless — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+proxies:
+  - type: vmess
+    name: VMess gRPC
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: grpc
+    tls: true
+    udp: true
+    grpc-opts:
+      grpc-service-name: grpcsvc
+    servername: example.com
+
+· vmess:h2-tls
+proxies:
+  - name: VMess H2
+    type: vmess
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    tls: true
+    network: h2
+    h2-opts:
+      host:
+        - cdn.example.com
+      path: /h2
+    udp: true
+    servername: example.com
+
+· vmess:http-tcp
+proxies:
+  - name: VMess HTTP
+    type: vmess
+    server: example.com
+    port: 80
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: http
+    http-opts:
+      method: GET
+      path:
+        - /http
+      headers:
+        Host:
+          - cdn.example.com
+    udp: true
+
+· vmess:tcp
+proxies:
+  - type: vmess
+    name: VMess TCP
+    server: example.com
+    port: 80
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: tcp
+    tls: false
+    udp: true
+
+· vmess:v2ray-json-ws
+proxies:
+  - type: vmess
+    name: Legacy VMess
+    server: legacy.example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    cipher: auto
+    alterId: 0
+    network: ws
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+      max-early-data: 256
+    tls: true
+    udp: true
+    servername: cdn.example.com
+
+· vmess:ws-early-data
+proxies:
+  - type: vmess
+    name: VMess WS ED
+    server: vmess.example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: ws
+    tls: true
+    udp: true
+    ws-opts:
+      path: /socket
+      headers:
+        Host: cdn.example.com
+      max-early-data: 2048
+      early-data-header-name: Sec-WebSocket-Protocol
+    servername: cdn.example.com
+
+· vmess:ws-tls
+proxies:
+  - type: vmess
+    name: VMess WS
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: ws
+    tls: true
+    udp: true
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    servername: cdn.example.com
+
+━━ wireguard — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

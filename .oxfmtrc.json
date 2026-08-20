@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    ".agents",
+    ".claude",
+    ".vscode",
+    "dist",
+    "node_modules",
+    "src/routeTree.gen.ts",
+    "wrangler.d.ts"
+  ],
+  "semi": false,
+  "quoteProps": "consistent",
+  "sortImports": {
+    "newlinesBetween": false
+  }
+}

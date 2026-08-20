@@ -1,0 +1,26 @@
+# Normalize text files in the repository and working tree.
+* text=auto eol=lf
+
+# Preserve native line endings for Windows scripts.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Keep binary assets out of text conversion and textual diffs.
+*.gif binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.wasm binary
+
+# Collapse generated files in GitHub diffs and language statistics.
+/src/routeTree.gen.ts linguist-generated=true
+/wrangler.d.ts linguist-generated=true

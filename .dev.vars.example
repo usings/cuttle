@@ -1,0 +1,2 @@
+# 用于管理订阅的密钥。
+CUTTLE_TOKEN=replace-with-a-long-random-secret

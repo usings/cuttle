@@ -1,0 +1,519 @@
+# Egern — egern · text/yaml; charset=utf-8 · .yaml
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+proxies:
+  - anytls:
+      name: AnyTLS
+      server: example.com
+      port: 443
+      password: password
+      sni: example.com
+      skip_tls_verify: false
+      udp_relay: true
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+proxies:
+  - http:
+      name: HTTP
+      server: example.com
+      port: 8080
+      username: user
+      password: pass
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+proxies:
+  - hysteria2:
+      name: Hysteria2
+      server: example.com
+      port: 443
+      auth: hy2-auth
+      sni: example.com
+      skip_tls_verify: false
+      udp_relay: true
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· snell:v4
+proxies:
+  - snell:
+      name: Snell
+      server: example.com
+      port: 443
+      psk: secret
+      version: 4
+      udp_relay: true
+      obfs: http
+      obfs_host: cdn.example.com
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+proxies:
+  - socks5:
+      name: Socks5
+      server: example.com
+      port: 1080
+      username: user
+      password: pass
+      udp_relay: true
+
+━━ ss 15/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+proxies:
+  - shadowsocks:
+      name: SS 2022
+      server: example.com
+      port: 443
+      method: 2022-blake3-aes-256-gcm
+      password: GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY=
+      udp_relay: false
+
+· ss:aes-256-gcm
+proxies:
+  - shadowsocks:
+      name: HK Node
+      server: example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: false
+
+· ss:base64-uri-list
+proxies:
+  - shadowsocks:
+      name: B64 SS
+      server: b64.example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: false
+
+· ss:canonical-json
+proxies:
+  - shadowsocks:
+      name: Canonical SS
+      server: cj.example.com
+      port: 443
+      method: aes-256-gcm
+      password: pass
+      udp_relay: true
+
+· ss:egern-yaml
+proxies:
+  - shadowsocks:
+      name: Egern SS
+      server: eg.example.com
+      port: 443
+      method: aes-256-gcm
+      password: pass
+      udp_relay: true
+
+· ss:loon-line
+proxies:
+  - shadowsocks:
+      name: Loon SS
+      server: ln.example.com
+      port: 443
+      method: aes-256-gcm
+      password: pass
+      udp_relay: true
+
+· ss:mihomo-yaml
+proxies:
+  - shadowsocks:
+      name: YAML SS
+      server: example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: true
+
+· ss:plugin-obfs
+proxies:
+  - shadowsocks:
+      name: SS OBFS
+      server: example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: false
+      obfs: http
+      obfs_host: cdn.example.com
+
+· ss:plugin-obfs-uri
+proxies:
+  - shadowsocks:
+      name: SS OBFS URI
+      server: example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: false
+      obfs: http
+      obfs_host: cdn.example.com
+      obfs_uri: /path
+
+· ss:plugin-v2ray
+proxies: []
+! SS V2Ray (ss/tcp) has no egern spelling; skipped.
+
+· ss:quantumult-x-line
+proxies:
+  - shadowsocks:
+      name: QX SS
+      server: qx.example.com
+      port: 443
+      method: aes-256-gcm
+      password: pass
+      udp_relay: true
+
+· ss:shadow-tls
+proxies:
+  - shadowsocks:
+      name: SS ShadowTLS
+      server: example.com
+      port: 443
+      method: aes-256-gcm
+      password: password
+      udp_relay: false
+      shadow_tls:
+        password: secret
+        sni: cdn.example.com
+
+· ss:ssd-airport
+proxies:
+  - shadowsocks:
+      name: SSD HK
+      server: ssd1.example.com
+      port: 443
+      method: aes-256-gcm
+      password: airport-pass
+      udp_relay: true
+      obfs: http
+      obfs_host: cdn.example.com
+
+· ss:surge-config-section
+proxies:
+  - shadowsocks:
+      name: Section SS
+      server: sec.example.com
+      port: 443
+      method: chacha20-poly1305
+      password: pass
+      udp_relay: true
+  - shadowsocks:
+      name: Section SS 2
+      server: sec.example.com
+      port: 8443
+      method: aes-256-gcm
+      password: pass2
+      udp_relay: true
+
+· ss:surge-line
+proxies:
+  - shadowsocks:
+      name: Surge SS
+      server: sg.example.com
+      port: 443
+      method: aes-256-gcm
+      password: pass
+      udp_relay: true
+
+━━ ssh 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssh:mihomo-yaml
+proxies:
+  - ssh:
+      name: SSH
+      server: example.com
+      port: 22
+      username: root
+      password: secret
+
+━━ ssr — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+proxies: []
+! Trojan gRPC (trojan/grpc) has no egern spelling; skipped.
+
+· trojan:httpupgrade
+proxies: []
+! Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped.
+
+· trojan:no-udp
+proxies:
+  - trojan:
+      name: Trojan NoUDP
+      server: example.com
+      port: 443
+      password: password
+      udp_relay: false
+      sni: example.com
+      skip_tls_verify: true
+
+· trojan:tcp-tls
+proxies:
+  - trojan:
+      name: Trojan
+      server: example.com
+      port: 443
+      password: password
+      udp_relay: true
+      sni: example.com
+
+· trojan:ws-tls
+proxies:
+  - trojan:
+      name: Trojan WS
+      server: example.com
+      port: 443
+      password: password
+      udp_relay: true
+      sni: example.com
+      websocket:
+        path: /ws
+        host: cdn.example.com
+
+· trojan:xray-json-httpupgrade
+proxies: []
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped.
+
+━━ tuic 1/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· tuic:v4
+proxies: []
+! TUIC v4 (tuic/tcp) cannot be carried by egern; skipped.
+
+· tuic:v5
+proxies:
+  - tuic:
+      name: TUIC
+      server: example.com
+      port: 443
+      uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      password: password
+      sni: example.com
+      alpn:
+        - h3
+
+· tuic:surge-line-v4
+proxies: []
+! TUIC Line (tuic/tcp) cannot be carried by egern; skipped.
+
+━━ vless 6/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+proxies: []
+! VLESS gRPC Multi (vless/grpc) has no egern spelling; skipped.
+
+· vless:reality-grpc
+proxies:
+  - vless:
+      name: VLESS Reality
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      udp_relay: true
+      transport:
+        grpc:
+          service_name: grpc
+          sni: www.example.com
+          reality:
+            public_key: public-key
+            short_id: 12ab
+
+· vless:reality-tcp
+proxies:
+  - vless:
+      name: VLESS Reality TCP
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      udp_relay: true
+      transport:
+        tls:
+          sni: www.example.com
+          reality:
+            public_key: public-key
+            short_id: 12ab
+
+· vless:sing-box-json-reality-grpc
+proxies:
+  - vless:
+      name: Reality gRPC
+      server: grpc.example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      udp_relay: true
+      transport:
+        grpc:
+          service_name: edge
+          sni: www.example.com
+          reality:
+            public_key: public-key
+            short_id: 12ab
+
+· vless:vision-tcp
+proxies:
+  - vless:
+      name: VLESS Vision
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      flow: xtls-rprx-vision
+      udp_relay: true
+      transport:
+        tls:
+          sni: example.com
+
+· vless:ws-alpn-fingerprint
+proxies:
+  - vless:
+      name: VLESS ALPN
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      udp_relay: true
+      transport:
+        wss:
+          path: /ws
+          headers:
+            Host: cdn.example.com
+          sni: example.com
+
+· vless:ws-tls
+proxies:
+  - vless:
+      name: VLESS WS
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      udp_relay: true
+      transport:
+        wss:
+          path: /ws
+          headers:
+            Host: cdn.example.com
+          sni: example.com
+
+· vless:xhttp-reality
+proxies: []
+! VLESS XHTTP (vless/xhttp) cannot be carried by egern; skipped.
+
+━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+proxies:
+  - vmess:
+      name: VMess gRPC
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        grpc:
+          service_name: grpcsvc
+          sni: example.com
+
+· vmess:h2-tls
+proxies:
+  - vmess:
+      name: VMess H2
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        http2:
+          path: /h2
+          headers:
+            Host: cdn.example.com
+          sni: example.com
+
+· vmess:http-tcp
+proxies:
+  - vmess:
+      name: VMess HTTP
+      server: example.com
+      port: 80
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        http1:
+          method: GET
+          path: /http
+          headers:
+            Host: cdn.example.com
+
+· vmess:tcp
+proxies:
+  - vmess:
+      name: VMess TCP
+      server: example.com
+      port: 80
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+
+· vmess:v2ray-json-ws
+proxies:
+  - vmess:
+      name: Legacy VMess
+      server: legacy.example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        wss:
+          path: /ws
+          headers:
+            Host: cdn.example.com
+          sni: cdn.example.com
+
+· vmess:ws-early-data
+proxies:
+  - vmess:
+      name: VMess WS ED
+      server: vmess.example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        wss:
+          path: /socket
+          headers:
+            Host: cdn.example.com
+          sni: cdn.example.com
+
+· vmess:ws-tls
+proxies:
+  - vmess:
+      name: VMess WS
+      server: example.com
+      port: 443
+      user_id: 01890d4e-7d8d-7d0c-98fb-123456789abc
+      security: auto
+      legacy: false
+      udp_relay: true
+      transport:
+        wss:
+          path: /ws
+          headers:
+            Host: cdn.example.com
+          sni: cdn.example.com
+
+━━ wireguard — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

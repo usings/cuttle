@@ -1,0 +1,840 @@
+# Xray — xray · application/json; charset=utf-8 · .json
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+{
+  "outbounds": [
+    {
+      "tag": "HTTP",
+      "protocol": "http",
+      "settings": {
+        "address": "example.com",
+        "port": 8080,
+        "user": "user",
+        "pass": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+{
+  "outbounds": [
+    {
+      "tag": "Socks5",
+      "protocol": "socks",
+      "settings": {
+        "address": "example.com",
+        "port": 1080,
+        "user": "user",
+        "pass": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+━━ ss 11/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+{
+  "outbounds": [
+    {
+      "tag": "SS 2022",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "method": "2022-blake3-aes-256-gcm",
+        "password": "GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY="
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:aes-256-gcm
+{
+  "outbounds": [
+    {
+      "tag": "HK Node",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:base64-uri-list
+{
+  "outbounds": [
+    {
+      "tag": "B64 SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "b64.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:canonical-json
+{
+  "outbounds": [
+    {
+      "tag": "Canonical SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "cj.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:egern-yaml
+{
+  "outbounds": [
+    {
+      "tag": "Egern SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "eg.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:loon-line
+{
+  "outbounds": [
+    {
+      "tag": "Loon SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "ln.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:mihomo-yaml
+{
+  "outbounds": [
+    {
+      "tag": "YAML SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:plugin-obfs
+{
+  "outbounds": []
+}
+! SS OBFS (ss/tcp) has no xray spelling; skipped.
+
+· ss:plugin-obfs-uri
+{
+  "outbounds": []
+}
+! SS OBFS URI (ss/tcp) has no xray spelling; skipped.
+
+· ss:plugin-v2ray
+{
+  "outbounds": []
+}
+! SS V2Ray (ss/tcp) has no xray spelling; skipped.
+
+· ss:quantumult-x-line
+{
+  "outbounds": [
+    {
+      "tag": "QX SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "qx.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:shadow-tls
+{
+  "outbounds": []
+}
+! SS ShadowTLS (ss/tcp) has no xray spelling; skipped.
+
+· ss:ssd-airport
+{
+  "outbounds": []
+}
+! SSD HK (ss/tcp) has no xray spelling; skipped.
+
+· ss:surge-config-section
+{
+  "outbounds": [
+    {
+      "tag": "Section SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "sec.example.com",
+        "port": 443,
+        "method": "chacha20-ietf-poly1305",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    },
+    {
+      "tag": "Section SS 2",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "sec.example.com",
+        "port": 8443,
+        "method": "aes-256-gcm",
+        "password": "pass2"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· ss:surge-line
+{
+  "outbounds": [
+    {
+      "tag": "Surge SS",
+      "protocol": "shadowsocks",
+      "settings": {
+        "address": "sg.example.com",
+        "port": 443,
+        "method": "aes-256-gcm",
+        "password": "pass"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+━━ ssh — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ ssr — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ trojan 6/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+{
+  "outbounds": [
+    {
+      "tag": "Trojan gRPC",
+      "protocol": "trojan",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "grpc",
+        "grpcSettings": {
+          "serviceName": "edge"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· trojan:httpupgrade
+{
+  "outbounds": [
+    {
+      "tag": "Upgrade",
+      "protocol": "trojan",
+      "settings": {
+        "address": "upgrade.example.com",
+        "port": 443,
+        "password": "secret"
+      },
+      "streamSettings": {
+        "method": "httpupgrade",
+        "httpupgradeSettings": {
+          "host": "cdn.example.com",
+          "path": "/upgrade",
+          "maxEarlyData": 1024,
+          "earlyDataHeaderName": "X-Early-Data"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "cdn.example.com"
+        }
+      }
+    }
+  ]
+}
+
+· trojan:no-udp
+{
+  "outbounds": [
+    {
+      "tag": "Trojan NoUDP",
+      "protocol": "trojan",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": true
+        }
+      }
+    }
+  ]
+}
+
+· trojan:tcp-tls
+{
+  "outbounds": [
+    {
+      "tag": "Trojan",
+      "protocol": "trojan",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· trojan:ws-tls
+{
+  "outbounds": [
+    {
+      "tag": "Trojan WS",
+      "protocol": "trojan",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "password": "password"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/ws",
+          "headers": {
+            "Host": "cdn.example.com"
+          }
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· trojan:xray-json-httpupgrade
+{
+  "outbounds": [
+    {
+      "tag": "Xray Upgrade",
+      "protocol": "trojan",
+      "settings": {
+        "address": "xray.example.com",
+        "port": 443,
+        "password": "secret"
+      },
+      "streamSettings": {
+        "method": "httpupgrade",
+        "httpupgradeSettings": {
+          "host": "cdn.example.com",
+          "path": "/upgrade",
+          "maxEarlyData": 512,
+          "earlyDataHeaderName": "X-Early-Data"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "cdn.example.com"
+        }
+      }
+    }
+  ]
+}
+
+━━ tuic — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vless 8/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+{
+  "outbounds": [
+    {
+      "tag": "VLESS gRPC Multi",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "grpc",
+        "grpcSettings": {
+          "serviceName": "edge"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vless:reality-grpc
+{
+  "outbounds": [
+    {
+      "tag": "VLESS Reality",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "grpc",
+        "grpcSettings": {
+          "serviceName": "grpc"
+        },
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.example.com",
+          "fingerprint": "chrome",
+          "publicKey": "public-key",
+          "shortId": "12ab"
+        }
+      }
+    }
+  ]
+}
+
+· vless:reality-tcp
+{
+  "outbounds": [
+    {
+      "tag": "VLESS Reality TCP",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.example.com",
+          "fingerprint": "chrome",
+          "publicKey": "public-key",
+          "shortId": "12ab"
+        }
+      }
+    }
+  ]
+}
+
+· vless:sing-box-json-reality-grpc
+{
+  "outbounds": [
+    {
+      "tag": "Reality gRPC",
+      "protocol": "vless",
+      "settings": {
+        "address": "grpc.example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "grpc",
+        "grpcSettings": {
+          "serviceName": "edge"
+        },
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.example.com",
+          "fingerprint": "chrome",
+          "publicKey": "public-key",
+          "shortId": "12ab"
+        }
+      }
+    }
+  ]
+}
+
+· vless:vision-tcp
+{
+  "outbounds": [
+    {
+      "tag": "VLESS Vision",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none",
+        "flow": "xtls-rprx-vision"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vless:ws-alpn-fingerprint
+{
+  "outbounds": [
+    {
+      "tag": "VLESS ALPN",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/ws",
+          "headers": {
+            "Host": "cdn.example.com"
+          }
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "fingerprint": "chrome"
+        }
+      }
+    }
+  ]
+}
+
+· vless:ws-tls
+{
+  "outbounds": [
+    {
+      "tag": "VLESS WS",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/ws",
+          "headers": {
+            "Host": "cdn.example.com"
+          }
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vless:xhttp-reality
+{
+  "outbounds": [
+    {
+      "tag": "VLESS XHTTP",
+      "protocol": "vless",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "encryption": "none"
+      },
+      "streamSettings": {
+        "method": "xhttp",
+        "xhttpSettings": {
+          "host": "cdn.example.com",
+          "path": "/split",
+          "mode": "auto"
+        },
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.example.com",
+          "fingerprint": "chrome",
+          "publicKey": "public-key",
+          "shortId": "12ab"
+        }
+      }
+    }
+  ]
+}
+
+━━ vmess 5/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+{
+  "outbounds": [
+    {
+      "tag": "VMess gRPC",
+      "protocol": "vmess",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "security": "auto"
+      },
+      "streamSettings": {
+        "method": "grpc",
+        "grpcSettings": {
+          "serviceName": "grpcsvc"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vmess:h2-tls
+{
+  "outbounds": []
+}
+! VMess H2 (vmess/h2) cannot be carried by xray; skipped.
+
+· vmess:http-tcp
+{
+  "outbounds": []
+}
+! VMess HTTP (vmess/http) cannot be carried by xray; skipped.
+
+· vmess:tcp
+{
+  "outbounds": [
+    {
+      "tag": "VMess TCP",
+      "protocol": "vmess",
+      "settings": {
+        "address": "example.com",
+        "port": 80,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "security": "auto"
+      },
+      "streamSettings": {
+        "method": "raw",
+        "security": "none"
+      }
+    }
+  ]
+}
+
+· vmess:v2ray-json-ws
+{
+  "outbounds": [
+    {
+      "tag": "Legacy VMess",
+      "protocol": "vmess",
+      "settings": {
+        "address": "legacy.example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "security": "auto"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/ws",
+          "headers": {
+            "Host": "cdn.example.com"
+          },
+          "maxEarlyData": 256
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "cdn.example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vmess:ws-early-data
+{
+  "outbounds": [
+    {
+      "tag": "VMess WS ED",
+      "protocol": "vmess",
+      "settings": {
+        "address": "vmess.example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "security": "auto"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/socket",
+          "headers": {
+            "Host": "cdn.example.com"
+          },
+          "maxEarlyData": 2048,
+          "earlyDataHeaderName": "Sec-WebSocket-Protocol"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "cdn.example.com"
+        }
+      }
+    }
+  ]
+}
+
+· vmess:ws-tls
+{
+  "outbounds": [
+    {
+      "tag": "VMess WS",
+      "protocol": "vmess",
+      "settings": {
+        "address": "example.com",
+        "port": 443,
+        "id": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+        "security": "auto"
+      },
+      "streamSettings": {
+        "method": "websocket",
+        "wsSettings": {
+          "path": "/ws",
+          "headers": {
+            "Host": "cdn.example.com"
+          }
+        },
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "cdn.example.com"
+        }
+      }
+    }
+  ]
+}
+
+━━ wireguard — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

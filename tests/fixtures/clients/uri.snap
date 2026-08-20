@@ -1,0 +1,162 @@
+# URI — uri · text/plain; charset=utf-8 · .txt
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+anytls://password@example.com:443?sni=example.com#AnyTLS
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+http://user:pass@example.com:8080#HTTP
+
+━━ hysteria 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria:v1
+hysteria://example.com:443?protocol=udp&auth=secret&peer=example.com&upmbps=20&downmbps=100&alpn=h3&udp=true#Hysteria
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+hysteria2://hy2-auth@example.com:443?sni=example.com#Hysteria2
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+socks://dXNlcjpwYXNz@example.com:1080#Socks5
+
+━━ ss 16/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+ss://2022-blake3-aes-256-gcm:GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY%3D@example.com:443#SS%202022
+
+· ss:aes-256-gcm
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443#HK%20Node
+
+· ss:base64-uri-list
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@b64.example.com:443#B64%20SS
+
+· ss:canonical-json
+ss://YWVzLTI1Ni1nY206cGFzcw==@cj.example.com:443#Canonical%20SS
+
+· ss:egern-yaml
+ss://YWVzLTI1Ni1nY206cGFzcw==@eg.example.com:443#Egern%20SS
+
+· ss:loon-line
+ss://YWVzLTI1Ni1nY206cGFzcw==@ln.example.com:443#Loon%20SS
+
+· ss:mihomo-yaml
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443#YAML%20SS
+
+· ss:plugin-obfs
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443?plugin=simple-obfs%3Bobfs%3Dhttp%3Bobfs-host%3Dcdn.example.com#SS%20OBFS
+
+· ss:plugin-obfs-uri
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443?plugin=simple-obfs%3Bobfs%3Dhttp%3Bobfs-host%3Dcdn.example.com%3Bobfs-uri%3D%2Fpath#SS%20OBFS%20URI
+
+· ss:plugin-v2ray
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443?plugin=v2ray-plugin%3Bobfs%3Dwebsocket%3Bmode%3Dwebsocket%3Bobfs-host%3Dcdn.example.com%3Bhost%3Dcdn.example.com%3Bpath%3D%2Fws%3Btls#SS%20V2Ray
+
+· ss:quantumult-x-line
+ss://YWVzLTI1Ni1nY206cGFzcw==@qx.example.com:443#QX%20SS
+
+· ss:shadow-tls
+ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@example.com:443?plugin=shadow-tls%3Bhost%3Dcdn.example.com%3Bpassword%3Dsecret%3Bversion%3D3#SS%20ShadowTLS
+
+· ss:ssd-airport
+ss://YWVzLTI1Ni1nY206YWlycG9ydC1wYXNz@ssd1.example.com:443?plugin=simple-obfs%3Bobfs%3Dhttp%3Bobfs-host%3Dcdn.example.com#SSD%20HK
+
+· ss:surge-config-section
+ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpwYXNz@sec.example.com:443#Section%20SS
+ss://YWVzLTI1Ni1nY206cGFzczI=@sec.example.com:8443#Section%20SS%202
+
+· ss:surge-line
+ss://YWVzLTI1Ni1nY206cGFzcw==@sg.example.com:443#Surge%20SS
+
+━━ ssh — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+ssr://c3NyLmV4YW1wbGUuY29tOjgzODg6YXV0aF9hZXMxMjhfbWQ1OmFlcy0yNTYtY2ZiOnRsczEuMl90aWNrZXRfYXV0aDpjR0Z6YzNkdmNtUS8_cmVtYXJrcz1VMU5TSUU1dlpHVSZwcm90b3BhcmFtPU5qUSZvYmZzcGFyYW09WTJSdUxtVjRZVzF3YkdVdVkyOXQ
+
+━━ trojan 6/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+trojan://password@example.com:443?type=grpc&sni=example.com&serviceName=edge&mode=gun#Trojan%20gRPC
+
+· trojan:httpupgrade
+trojan://secret@upgrade.example.com:443?type=httpupgrade&sni=cdn.example.com&host=cdn.example.com&path=%2Fupgrade%3Fed%3D1024&eh=X-Early-Data#Upgrade
+
+· trojan:no-udp
+trojan://password@example.com:443?type=tcp&sni=example.com&allowInsecure=1#Trojan%20NoUDP
+
+· trojan:tcp-tls
+trojan://password@example.com:443?type=tcp&sni=example.com#Trojan
+
+· trojan:ws-tls
+trojan://password@example.com:443?type=ws&sni=example.com&host=cdn.example.com&path=%2Fws#Trojan%20WS
+
+· trojan:xray-json-httpupgrade
+trojan://secret@xray.example.com:443?type=httpupgrade&sni=cdn.example.com&host=cdn.example.com&path=%2Fupgrade%3Fed%3D512&eh=X-Early-Data#Xray%20Upgrade
+
+━━ tuic 3/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· tuic:v4
+tuic://tuic-v4-token:@t4.example.com:443?sni=t4.example.com&congestion_control=bbr&alpn=h3&udp=true#TUIC%20v4
+
+· tuic:v5
+tuic://01890d4e-7d8d-7d0c-98fb-123456789abc:password@example.com:443?sni=example.com&congestion_control=bbr&alpn=h3&udp_relay_mode=native&udp=true#TUIC
+
+· tuic:surge-line-v4
+tuic://line-token:@tl.example.com:443?sni=tl.example.com&alpn=h3&udp=true#TUIC%20Line
+
+━━ vless 8/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=tls&encryption=none&type=grpc&sni=example.com&serviceName=edge&mode=multi#VLESS%20gRPC%20Multi
+
+· vless:reality-grpc
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=reality&encryption=none&type=grpc&sni=www.example.com&fp=chrome&serviceName=grpc&mode=gun&pbk=public-key&sid=12ab#VLESS%20Reality
+
+· vless:reality-tcp
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=reality&encryption=none&type=tcp&sni=www.example.com&fp=chrome&pbk=public-key&sid=12ab#VLESS%20Reality%20TCP
+
+· vless:sing-box-json-reality-grpc
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@grpc.example.com:443?security=reality&type=grpc&sni=www.example.com&fp=chrome&serviceName=edge&mode=gun&pbk=public-key&sid=12ab#Reality%20gRPC
+
+· vless:vision-tcp
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=tls&encryption=none&type=tcp&sni=example.com&flow=xtls-rprx-vision#VLESS%20Vision
+
+· vless:ws-alpn-fingerprint
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=tls&encryption=none&type=ws&sni=example.com&fp=chrome&alpn=h2%2Chttp%2F1.1&host=cdn.example.com&path=%2Fws#VLESS%20ALPN
+
+· vless:ws-tls
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=tls&encryption=none&type=ws&sni=example.com&host=cdn.example.com&path=%2Fws#VLESS%20WS
+
+· vless:xhttp-reality
+vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=reality&type=xhttp&sni=www.example.com&fp=chrome&host=cdn.example.com&path=%2Fsplit&mode=auto&pbk=public-key&sid=12ab#VLESS%20XHTTP
+
+━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgZ1JQQyIsImFkZCI6ImV4YW1wbGUuY29tIiwicG9ydCI6IjQ0MyIsImlkIjoiMDE4OTBkNGUtN2Q4ZC03ZDBjLTk4ZmItMTIzNDU2Nzg5YWJjIiwiYWlkIjoiMCIsInNjeSI6ImF1dG8iLCJuZXQiOiJncnBjIiwidHlwZSI6Imd1biIsInBhdGgiOiJncnBjc3ZjIiwidGxzIjoidGxzIiwic25pIjoiZXhhbXBsZS5jb20ifQ==
+
+· vmess:h2-tls
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgSDIiLCJhZGQiOiJleGFtcGxlLmNvbSIsInBvcnQiOiI0NDMiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJzY3kiOiJhdXRvIiwibmV0IjoiaDIiLCJob3N0IjoiY2RuLmV4YW1wbGUuY29tIiwicGF0aCI6Ii9oMiIsInRscyI6InRscyIsInNuaSI6ImV4YW1wbGUuY29tIn0=
+
+· vmess:http-tcp
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgSFRUUCIsImFkZCI6ImV4YW1wbGUuY29tIiwicG9ydCI6IjgwIiwiaWQiOiIwMTg5MGQ0ZS03ZDhkLTdkMGMtOThmYi0xMjM0NTY3ODlhYmMiLCJhaWQiOiIwIiwic2N5IjoiYXV0byIsIm5ldCI6InRjcCIsInR5cGUiOiJodHRwIiwiaG9zdCI6ImNkbi5leGFtcGxlLmNvbSIsInBhdGgiOiIvaHR0cCIsInRscyI6IiJ9
+
+· vmess:tcp
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgVENQIiwiYWRkIjoiZXhhbXBsZS5jb20iLCJwb3J0IjoiODAiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJzY3kiOiJhdXRvIiwibmV0IjoidGNwIiwidGxzIjoiIn0=
+
+· vmess:v2ray-json-ws
+vmess://eyJ2IjoiMiIsInBzIjoiTGVnYWN5IFZNZXNzIiwiYWRkIjoibGVnYWN5LmV4YW1wbGUuY29tIiwicG9ydCI6IjQ0MyIsImlkIjoiMDE4OTBkNGUtN2Q4ZC03ZDBjLTk4ZmItMTIzNDU2Nzg5YWJjIiwiYWlkIjoiMCIsInNjeSI6ImF1dG8iLCJuZXQiOiJ3cyIsImhvc3QiOiJjZG4uZXhhbXBsZS5jb20iLCJwYXRoIjoiL3dzP2VkPTI1NiIsInRscyI6InRscyIsInNuaSI6ImNkbi5leGFtcGxlLmNvbSJ9
+
+· vmess:ws-early-data
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgV1MgRUQiLCJhZGQiOiJ2bWVzcy5leGFtcGxlLmNvbSIsInBvcnQiOiI0NDMiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJzY3kiOiJhdXRvIiwibmV0Ijoid3MiLCJob3N0IjoiY2RuLmV4YW1wbGUuY29tIiwicGF0aCI6Ii9zb2NrZXQ/ZWQ9MjA0OCIsImVoIjoiU2VjLVdlYlNvY2tldC1Qcm90b2NvbCIsInRscyI6InRscyIsInNuaSI6ImNkbi5leGFtcGxlLmNvbSJ9
+
+· vmess:ws-tls
+vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgV1MiLCJhZGQiOiJleGFtcGxlLmNvbSIsInBvcnQiOiI0NDMiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJzY3kiOiJhdXRvIiwibmV0Ijoid3MiLCJob3N0IjoiY2RuLmV4YW1wbGUuY29tIiwicGF0aCI6Ii93cyIsInRscyI6InRscyIsInNuaSI6ImNkbi5leGFtcGxlLmNvbSJ9
+
+━━ wireguard 2/2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· wireguard:clash-yaml
+wireguard://cHJpdmF0ZS1rZXk%3D@wg.example.com:51820?publickey=cHVibGljLWtleQ%3D%3D&address=10.0.0.2%2F24%2Cfd00%3A%3A2%2F64&udp=1#WireGuard
+
+· wireguard:uri
+wireguard://cHJpdmF0ZS1rZXk%3D@example.com:51820?publickey=cHVibGljLWtleQ%3D%3D&address=10.0.0.2%2F32&mtu=1420&udp=1#WireGuard

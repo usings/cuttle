@@ -1,0 +1,938 @@
+# Canonical JSON — json · application/json; charset=utf-8 · .json
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+[
+  {
+    "type": "anytls",
+    "name": "AnyTLS",
+    "server": "example.com",
+    "port": 443,
+    "sni": "example.com",
+    "skip-cert-verify": false,
+    "password": "password",
+    "tls": true,
+    "udp": true
+  }
+]
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+[
+  {
+    "type": "http",
+    "name": "HTTP",
+    "server": "example.com",
+    "port": 8080,
+    "username": "user",
+    "password": "pass",
+    "tls": false,
+    "udp": false
+  }
+]
+
+━━ hysteria 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria:v1
+[
+  {
+    "type": "hysteria",
+    "name": "Hysteria",
+    "server": "example.com",
+    "port": 443,
+    "protocol": "udp",
+    "alpn": [
+      "h3"
+    ],
+    "auth-str": "secret",
+    "sni": "example.com",
+    "up": "20",
+    "down": "100",
+    "tls": true,
+    "udp": true
+  }
+]
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+[
+  {
+    "type": "hysteria2",
+    "name": "Hysteria2",
+    "server": "example.com",
+    "port": 443,
+    "username": "hy2-auth",
+    "sni": "example.com",
+    "skip-cert-verify": false,
+    "password": "hy2-auth",
+    "tls": true,
+    "udp": true
+  }
+]
+
+━━ mieru 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· mieru:mihomo-yaml
+[
+  {
+    "name": "Mieru",
+    "type": "mieru",
+    "server": "mi.example.com",
+    "port": 2999,
+    "transport": "TCP",
+    "username": "user",
+    "password": "pass",
+    "udp": true
+  }
+]
+
+━━ snell 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· snell:v4
+[
+  {
+    "name": "Snell",
+    "type": "snell",
+    "server": "example.com",
+    "port": 443,
+    "psk": "secret",
+    "version": 4,
+    "obfs-opts": {
+      "mode": "http",
+      "host": "cdn.example.com"
+    },
+    "udp": true
+  }
+]
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+[
+  {
+    "type": "socks5",
+    "name": "Socks5",
+    "server": "example.com",
+    "port": 1080,
+    "username": "user",
+    "password": "pass",
+    "udp": true
+  }
+]
+
+━━ ss 16/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+[
+  {
+    "type": "ss",
+    "name": "SS 2022",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "2022-blake3-aes-256-gcm",
+    "password": "GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY=",
+    "udp": false
+  }
+]
+
+· ss:aes-256-gcm
+[
+  {
+    "type": "ss",
+    "name": "HK Node",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false
+  }
+]
+
+· ss:base64-uri-list
+[
+  {
+    "type": "ss",
+    "name": "B64 SS",
+    "server": "b64.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false
+  }
+]
+
+· ss:canonical-json
+[
+  {
+    "type": "ss",
+    "name": "Canonical SS",
+    "server": "cj.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "pass",
+    "udp": true
+  }
+]
+
+· ss:egern-yaml
+[
+  {
+    "type": "ss",
+    "name": "Egern SS",
+    "server": "eg.example.com",
+    "port": 443,
+    "udp": true,
+    "cipher": "aes-256-gcm",
+    "password": "pass"
+  }
+]
+
+· ss:loon-line
+[
+  {
+    "type": "ss",
+    "name": "Loon SS",
+    "server": "ln.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "pass",
+    "udp": true,
+    "network": "tcp",
+    "tls": false
+  }
+]
+
+· ss:mihomo-yaml
+[
+  {
+    "name": "YAML SS",
+    "type": "ss",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": true
+  }
+]
+
+· ss:plugin-obfs
+[
+  {
+    "type": "ss",
+    "name": "SS OBFS",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false,
+    "plugin": "obfs-local",
+    "plugin-opts": {
+      "obfs": "http",
+      "obfs-host": "cdn.example.com"
+    }
+  }
+]
+
+· ss:plugin-obfs-uri
+[
+  {
+    "type": "ss",
+    "name": "SS OBFS URI",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false,
+    "plugin": "obfs-local",
+    "plugin-opts": {
+      "obfs": "http",
+      "obfs-host": "cdn.example.com",
+      "obfs-uri": "/path"
+    }
+  }
+]
+
+· ss:plugin-v2ray
+[
+  {
+    "type": "ss",
+    "name": "SS V2Ray",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false,
+    "plugin": "v2ray-plugin",
+    "plugin-opts": {
+      "tls": true,
+      "host": "cdn.example.com",
+      "path": "/ws"
+    }
+  }
+]
+
+· ss:quantumult-x-line
+[
+  {
+    "type": "ss",
+    "name": "QX SS",
+    "server": "qx.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "pass",
+    "udp": true,
+    "network": "tcp",
+    "tls": false
+  }
+]
+
+· ss:shadow-tls
+[
+  {
+    "type": "ss",
+    "name": "SS ShadowTLS",
+    "server": "example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "password",
+    "udp": false,
+    "plugin": "shadow-tls",
+    "plugin-opts": {
+      "host": "cdn.example.com",
+      "password": "secret",
+      "version": 3
+    }
+  }
+]
+
+· ss:ssd-airport
+[
+  {
+    "type": "ss",
+    "name": "SSD HK",
+    "server": "ssd1.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "airport-pass",
+    "udp": true,
+    "plugin": "obfs-local",
+    "plugin-opts": {
+      "obfs": "http",
+      "obfs-host": "cdn.example.com"
+    }
+  }
+]
+
+· ss:surge-config-section
+[
+  {
+    "type": "ss",
+    "name": "Section SS",
+    "server": "sec.example.com",
+    "port": 443,
+    "cipher": "chacha20-ietf-poly1305",
+    "password": "pass",
+    "udp": true,
+    "network": "tcp",
+    "tls": false
+  },
+  {
+    "type": "ss",
+    "name": "Section SS 2",
+    "server": "sec.example.com",
+    "port": 8443,
+    "cipher": "aes-256-gcm",
+    "password": "pass2",
+    "udp": true,
+    "network": "tcp",
+    "tls": false
+  }
+]
+
+· ss:surge-line
+[
+  {
+    "type": "ss",
+    "name": "Surge SS",
+    "server": "sg.example.com",
+    "port": 443,
+    "cipher": "aes-256-gcm",
+    "password": "pass",
+    "udp": true,
+    "network": "tcp",
+    "tls": false
+  }
+]
+
+━━ ssh 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssh:mihomo-yaml
+[
+  {
+    "name": "SSH",
+    "type": "ssh",
+    "server": "example.com",
+    "port": 22,
+    "username": "root",
+    "password": "secret",
+    "udp": true
+  }
+]
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+[
+  {
+    "type": "ssr",
+    "name": "SSR Node",
+    "server": "ssr.example.com",
+    "port": 8388,
+    "protocol": "auth_aes128_md5",
+    "cipher": "aes-256-cfb",
+    "obfs": "tls1.2_ticket_auth",
+    "password": "password",
+    "protocol-param": "64",
+    "obfs-param": "cdn.example.com",
+    "udp": true
+  }
+]
+
+━━ trojan 6/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+[
+  {
+    "type": "trojan",
+    "name": "Trojan gRPC",
+    "server": "example.com",
+    "port": 443,
+    "network": "grpc",
+    "tls": true,
+    "udp": true,
+    "password": "password",
+    "sni": "example.com",
+    "grpc-opts": {
+      "grpc-service-name": "edge"
+    }
+  }
+]
+
+· trojan:httpupgrade
+[
+  {
+    "type": "trojan",
+    "name": "Upgrade",
+    "server": "upgrade.example.com",
+    "port": 443,
+    "network": "httpupgrade",
+    "tls": true,
+    "udp": true,
+    "password": "secret",
+    "httpupgrade-opts": {
+      "host": "cdn.example.com",
+      "path": "/upgrade",
+      "max-early-data": 1024,
+      "early-data-header-name": "X-Early-Data"
+    },
+    "sni": "cdn.example.com"
+  }
+]
+
+· trojan:no-udp
+[
+  {
+    "name": "Trojan NoUDP",
+    "type": "trojan",
+    "server": "example.com",
+    "port": 443,
+    "password": "password",
+    "sni": "example.com",
+    "udp": false,
+    "skip-cert-verify": true,
+    "tls": true,
+    "network": "tcp"
+  }
+]
+
+· trojan:tcp-tls
+[
+  {
+    "type": "trojan",
+    "name": "Trojan",
+    "server": "example.com",
+    "port": 443,
+    "network": "tcp",
+    "tls": true,
+    "udp": true,
+    "password": "password",
+    "sni": "example.com"
+  }
+]
+
+· trojan:ws-tls
+[
+  {
+    "type": "trojan",
+    "name": "Trojan WS",
+    "server": "example.com",
+    "port": 443,
+    "network": "ws",
+    "tls": true,
+    "udp": true,
+    "password": "password",
+    "sni": "example.com",
+    "ws-opts": {
+      "path": "/ws",
+      "headers": {
+        "Host": "cdn.example.com"
+      }
+    }
+  }
+]
+
+· trojan:xray-json-httpupgrade
+[
+  {
+    "type": "trojan",
+    "name": "Xray Upgrade",
+    "server": "xray.example.com",
+    "port": 443,
+    "password": "secret",
+    "network": "httpupgrade",
+    "httpupgrade-opts": {
+      "host": "cdn.example.com",
+      "path": "/upgrade",
+      "max-early-data": 512,
+      "early-data-header-name": "X-Early-Data"
+    },
+    "tls": true,
+    "sni": "cdn.example.com",
+    "udp": true
+  }
+]
+
+━━ tuic 3/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· tuic:v4
+[
+  {
+    "type": "tuic",
+    "name": "TUIC v4",
+    "server": "t4.example.com",
+    "port": 443,
+    "alpn": "h3",
+    "congestion_control": "bbr",
+    "sni": "t4.example.com",
+    "uuid": "tuic-v4-token",
+    "tls": true,
+    "udp": true
+  }
+]
+
+· tuic:v5
+[
+  {
+    "type": "tuic",
+    "name": "TUIC",
+    "server": "example.com",
+    "port": 443,
+    "password": "password",
+    "sni": "example.com",
+    "congestion_control": "bbr",
+    "alpn": "h3",
+    "udp_relay_mode": "native",
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "tls": true,
+    "udp": true
+  }
+]
+
+· tuic:surge-line-v4
+[
+  {
+    "type": "tuic",
+    "name": "TUIC Line",
+    "server": "tl.example.com",
+    "port": 443,
+    "token": "line-token",
+    "udp": true,
+    "sni": "tl.example.com",
+    "alpn": [
+      "h3"
+    ],
+    "network": "tcp",
+    "tls": true
+  }
+]
+
+━━ vless 8/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+[
+  {
+    "type": "vless",
+    "name": "VLESS gRPC Multi",
+    "server": "example.com",
+    "port": 443,
+    "network": "grpc",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "sni": "example.com",
+    "grpc-opts": {
+      "grpc-service-name": "edge",
+      "mode": "multi"
+    }
+  }
+]
+
+· vless:reality-grpc
+[
+  {
+    "type": "vless",
+    "name": "VLESS Reality",
+    "server": "example.com",
+    "port": 443,
+    "network": "grpc",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "sni": "www.example.com",
+    "client-fingerprint": "chrome",
+    "reality-opts": {
+      "public-key": "public-key",
+      "short-id": "12ab"
+    },
+    "grpc-opts": {
+      "grpc-service-name": "grpc"
+    }
+  }
+]
+
+· vless:reality-tcp
+[
+  {
+    "type": "vless",
+    "name": "VLESS Reality TCP",
+    "server": "example.com",
+    "port": 443,
+    "network": "tcp",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "sni": "www.example.com",
+    "client-fingerprint": "chrome",
+    "reality-opts": {
+      "public-key": "public-key",
+      "short-id": "12ab"
+    }
+  }
+]
+
+· vless:sing-box-json-reality-grpc
+[
+  {
+    "type": "vless",
+    "name": "Reality gRPC",
+    "server": "grpc.example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "tls": true,
+    "sni": "www.example.com",
+    "client-fingerprint": "chrome",
+    "reality-opts": {
+      "public-key": "public-key",
+      "short-id": "12ab"
+    },
+    "network": "grpc",
+    "grpc-opts": {
+      "grpc-service-name": "edge"
+    },
+    "udp": true
+  }
+]
+
+· vless:vision-tcp
+[
+  {
+    "type": "vless",
+    "name": "VLESS Vision",
+    "server": "example.com",
+    "port": 443,
+    "network": "tcp",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "flow": "xtls-rprx-vision",
+    "sni": "example.com"
+  }
+]
+
+· vless:ws-alpn-fingerprint
+[
+  {
+    "type": "vless",
+    "name": "VLESS ALPN",
+    "server": "example.com",
+    "port": 443,
+    "network": "ws",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "sni": "example.com",
+    "client-fingerprint": "chrome",
+    "alpn": [
+      "h2",
+      "http/1.1"
+    ],
+    "ws-opts": {
+      "path": "/ws",
+      "headers": {
+        "Host": "cdn.example.com"
+      }
+    }
+  }
+]
+
+· vless:ws-tls
+[
+  {
+    "type": "vless",
+    "name": "VLESS WS",
+    "server": "example.com",
+    "port": 443,
+    "network": "ws",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "encryption": "none",
+    "sni": "example.com",
+    "ws-opts": {
+      "path": "/ws",
+      "headers": {
+        "Host": "cdn.example.com"
+      }
+    }
+  }
+]
+
+· vless:xhttp-reality
+[
+  {
+    "type": "vless",
+    "name": "VLESS XHTTP",
+    "server": "example.com",
+    "port": 443,
+    "network": "xhttp",
+    "tls": true,
+    "udp": true,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "sni": "www.example.com",
+    "client-fingerprint": "chrome",
+    "reality-opts": {
+      "public-key": "public-key",
+      "short-id": "12ab"
+    },
+    "xhttp-opts": {
+      "host": "cdn.example.com",
+      "path": "/split",
+      "mode": "auto"
+    }
+  }
+]
+
+━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+[
+  {
+    "type": "vmess",
+    "name": "VMess gRPC",
+    "server": "example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "network": "grpc",
+    "tls": true,
+    "udp": true,
+    "sni": "example.com",
+    "grpc-opts": {
+      "grpc-service-name": "grpcsvc"
+    }
+  }
+]
+
+· vmess:h2-tls
+[
+  {
+    "name": "VMess H2",
+    "type": "vmess",
+    "server": "example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "tls": true,
+    "servername": "example.com",
+    "network": "h2",
+    "h2-opts": {
+      "host": [
+        "cdn.example.com"
+      ],
+      "path": "/h2"
+    },
+    "udp": true,
+    "sni": "example.com"
+  }
+]
+
+· vmess:http-tcp
+[
+  {
+    "name": "VMess HTTP",
+    "type": "vmess",
+    "server": "example.com",
+    "port": 80,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "network": "http",
+    "http-opts": {
+      "method": "GET",
+      "path": [
+        "/http"
+      ],
+      "headers": {
+        "Host": [
+          "cdn.example.com"
+        ]
+      }
+    },
+    "udp": true
+  }
+]
+
+· vmess:tcp
+[
+  {
+    "type": "vmess",
+    "name": "VMess TCP",
+    "server": "example.com",
+    "port": 80,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "network": "tcp",
+    "tls": false,
+    "udp": true
+  }
+]
+
+· vmess:v2ray-json-ws
+[
+  {
+    "type": "vmess",
+    "name": "Legacy VMess",
+    "server": "legacy.example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "cipher": "auto",
+    "alterId": 0,
+    "network": "ws",
+    "ws-opts": {
+      "path": "/ws",
+      "headers": {
+        "Host": "cdn.example.com"
+      },
+      "max-early-data": 256
+    },
+    "tls": true,
+    "sni": "cdn.example.com",
+    "udp": true
+  }
+]
+
+· vmess:ws-early-data
+[
+  {
+    "type": "vmess",
+    "name": "VMess WS ED",
+    "server": "vmess.example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "network": "ws",
+    "tls": true,
+    "udp": true,
+    "ws-opts": {
+      "path": "/socket",
+      "headers": {
+        "Host": "cdn.example.com"
+      },
+      "max-early-data": 2048,
+      "early-data-header-name": "Sec-WebSocket-Protocol"
+    },
+    "sni": "cdn.example.com"
+  }
+]
+
+· vmess:ws-tls
+[
+  {
+    "type": "vmess",
+    "name": "VMess WS",
+    "server": "example.com",
+    "port": 443,
+    "uuid": "01890d4e-7d8d-7d0c-98fb-123456789abc",
+    "alterId": 0,
+    "cipher": "auto",
+    "network": "ws",
+    "tls": true,
+    "udp": true,
+    "ws-opts": {
+      "path": "/ws",
+      "headers": {
+        "Host": "cdn.example.com"
+      }
+    },
+    "sni": "cdn.example.com"
+  }
+]
+
+━━ wireguard 2/2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· wireguard:clash-yaml
+[
+  {
+    "name": "WireGuard",
+    "type": "wireguard",
+    "server": "wg.example.com",
+    "port": 51820,
+    "private-key": "cHJpdmF0ZS1rZXk=",
+    "public-key": "cHVibGljLWtleQ==",
+    "address": [
+      "10.0.0.2/24",
+      "fd00::2/64"
+    ],
+    "ip": "10.0.0.2",
+    "ip-cidr": 24,
+    "ipv6": "fd00::2",
+    "ipv6-cidr": 64,
+    "udp": true
+  }
+]
+
+· wireguard:uri
+[
+  {
+    "type": "wireguard",
+    "name": "WireGuard",
+    "server": "example.com",
+    "port": 51820,
+    "address": "10.0.0.2/32",
+    "publickey": "cHVibGljLWtleQ==",
+    "mtu": 1420,
+    "private-key": "cHJpdmF0ZS1rZXk=",
+    "public-key": "cHVibGljLWtleQ==",
+    "ip": "10.0.0.2",
+    "ip-cidr": 32,
+    "udp": true
+  }
+]

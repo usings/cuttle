@@ -1,0 +1,152 @@
+# Loon — loon · text/plain; charset=utf-8 · .conf
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+AnyTLS = anytls, example.com, 443, "password", over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+HTTP = http, example.com, 8080, user, "pass"
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+Hysteria2 = Hysteria2, example.com, 443, "hy2-auth", tls-name=example.com, skip-cert-verify=false, udp=true
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+Socks5 = socks5, example.com, 1080, user, "pass", udp=true
+
+━━ ss 15/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+SS 2022 = shadowsocks, example.com, 443, 2022-blake3-aes-256-gcm, "GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY="
+
+· ss:aes-256-gcm
+HK Node = shadowsocks, example.com, 443, aes-256-gcm, "password"
+
+· ss:base64-uri-list
+B64 SS = shadowsocks, b64.example.com, 443, aes-256-gcm, "password"
+
+· ss:canonical-json
+Canonical SS = shadowsocks, cj.example.com, 443, aes-256-gcm, "pass", udp=true
+
+· ss:egern-yaml
+Egern SS = shadowsocks, eg.example.com, 443, aes-256-gcm, "pass", udp=true
+
+· ss:loon-line
+Loon SS = shadowsocks, ln.example.com, 443, aes-256-gcm, "pass", udp=true
+
+· ss:mihomo-yaml
+YAML SS = shadowsocks, example.com, 443, aes-256-gcm, "password", udp=true
+
+· ss:plugin-obfs
+SS OBFS = shadowsocks, example.com, 443, aes-256-gcm, "password", obfs-name=http, obfs-host=cdn.example.com
+
+· ss:plugin-obfs-uri
+SS OBFS URI = shadowsocks, example.com, 443, aes-256-gcm, "password", obfs-name=http, obfs-host=cdn.example.com
+
+· ss:plugin-v2ray
+! SS V2Ray (ss/tcp) has no loon spelling; skipped.
+
+· ss:quantumult-x-line
+QX SS = shadowsocks, qx.example.com, 443, aes-256-gcm, "pass", udp=true
+
+· ss:shadow-tls
+SS ShadowTLS = shadowsocks, example.com, 443, aes-256-gcm, "password", shadow-tls-password=secret, shadow-tls-sni=cdn.example.com, shadow-tls-version=3
+
+· ss:ssd-airport
+SSD HK = shadowsocks, ssd1.example.com, 443, aes-256-gcm, "airport-pass", obfs-name=http, obfs-host=cdn.example.com, udp=true
+
+· ss:surge-config-section
+Section SS = shadowsocks, sec.example.com, 443, chacha20-ietf-poly1305, "pass", udp=true
+Section SS 2 = shadowsocks, sec.example.com, 8443, aes-256-gcm, "pass2", udp=true
+
+· ss:surge-line
+Surge SS = shadowsocks, sg.example.com, 443, aes-256-gcm, "pass", udp=true
+
+━━ ssh — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+SSR Node = shadowsocksr, ssr.example.com, 8388, aes-256-cfb, "password", protocol=auth_aes128_md5, protocol-param=64, obfs=tls1.2_ticket_auth, obfs-param=cdn.example.com, udp=true
+
+━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+! Trojan gRPC (trojan/grpc) cannot be carried by loon; skipped.
+
+· trojan:httpupgrade
+! Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped.
+
+· trojan:no-udp
+Trojan NoUDP = trojan, example.com, 443, "password", transport=tcp, over-tls=true, tls-name=example.com, skip-cert-verify=true
+
+· trojan:tcp-tls
+Trojan = trojan, example.com, 443, "password", transport=tcp, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
+
+· trojan:ws-tls
+Trojan WS = trojan, example.com, 443, "password", transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
+
+· trojan:xray-json-httpupgrade
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped.
+
+━━ tuic — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vless 4/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+! VLESS gRPC Multi (vless/grpc) cannot be carried by loon; skipped.
+
+· vless:reality-grpc
+! VLESS Reality (vless/grpc) cannot be carried by loon; skipped.
+
+· vless:reality-tcp
+VLESS Reality TCP = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=tcp, over-tls=true, sni=www.example.com, skip-cert-verify=false, tls-profile=chrome, public-key="public-key", short-id=12ab, udp=true
+
+· vless:sing-box-json-reality-grpc
+! Reality gRPC (vless/grpc) cannot be carried by loon; skipped.
+
+· vless:vision-tcp
+VLESS Vision = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=tcp, flow=xtls-rprx-vision, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
+
+· vless:ws-alpn-fingerprint
+VLESS ALPN = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=example.com, skip-cert-verify=false, alpn="h2,http/1.1", tls-profile=chrome, udp=true
+
+· vless:ws-tls
+VLESS WS = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
+
+· vless:xhttp-reality
+! VLESS XHTTP (vless/xhttp) cannot be carried by loon; skipped.
+
+━━ vmess 5/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+! VMess gRPC (vmess/grpc) cannot be carried by loon; skipped.
+
+· vmess:h2-tls
+! VMess H2 (vmess/h2) cannot be carried by loon; skipped.
+
+· vmess:http-tcp
+VMess HTTP = vmess, example.com, 80, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=http, path=/http, host=cdn.example.com, udp=true
+
+· vmess:tcp
+VMess TCP = vmess, example.com, 80, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=tcp, over-tls=false, udp=true
+
+· vmess:v2ray-json-ws
+Legacy VMess = vmess, legacy.example.com, 443, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=cdn.example.com, skip-cert-verify=false, udp=true
+
+· vmess:ws-early-data
+VMess WS ED = vmess, vmess.example.com, 443, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=ws, path=/socket, host=cdn.example.com, over-tls=true, tls-name=cdn.example.com, skip-cert-verify=false, udp=true
+
+· vmess:ws-tls
+VMess WS = vmess, example.com, 443, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=cdn.example.com, skip-cert-verify=false, udp=true
+
+━━ wireguard 2/2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· wireguard:clash-yaml
+WireGuard = wireguard, private-key="cHJpdmF0ZS1rZXk=", peers=[{public-key="cHVibGljLWtleQ==",allowed-ips="0.0.0.0/0,::/0",endpoint=wg.example.com:51820}]
+
+· wireguard:uri
+WireGuard = wireguard, interface-ip=10.0.0.2, private-key="cHJpdmF0ZS1rZXk=", mtu=1420, peers=[{public-key="cHVibGljLWtleQ==",allowed-ips="0.0.0.0/0,::/0",endpoint=example.com:51820}]

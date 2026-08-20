@@ -1,0 +1,134 @@
+# Surge — surge · text/plain; charset=utf-8 · .conf
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+AnyTLS = anytls, example.com, 443, password=password, sni=example.com, skip-cert-verify=false, udp-relay=true
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+HTTP = http, example.com, 8080, username=user, password=pass, udp-relay=false
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+Hysteria2 = hysteria2, example.com, 443, password=hy2-auth, sni=example.com, skip-cert-verify=false
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· snell:v4
+Snell = snell, example.com, 443, psk="secret", version=4, obfs=http, obfs-host=cdn.example.com, udp-relay=true
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+Socks5 = socks5, example.com, 1080, username=user, password=pass, udp-relay=true
+
+━━ ss 15/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+SS 2022 = ss, example.com, 443, encrypt-method=2022-blake3-aes-256-gcm, password="GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY=", udp-relay=false
+
+· ss:aes-256-gcm
+HK Node = ss, example.com, 443, encrypt-method=aes-256-gcm, password="password", udp-relay=false
+
+· ss:base64-uri-list
+B64 SS = ss, b64.example.com, 443, encrypt-method=aes-256-gcm, password="password", udp-relay=false
+
+· ss:canonical-json
+Canonical SS = ss, cj.example.com, 443, encrypt-method=aes-256-gcm, password="pass", udp-relay=true
+
+· ss:egern-yaml
+Egern SS = ss, eg.example.com, 443, encrypt-method=aes-256-gcm, password="pass", udp-relay=true
+
+· ss:loon-line
+Loon SS = ss, ln.example.com, 443, encrypt-method=aes-256-gcm, password="pass", udp-relay=true
+
+· ss:mihomo-yaml
+YAML SS = ss, example.com, 443, encrypt-method=aes-256-gcm, password="password", udp-relay=true
+
+· ss:plugin-obfs
+SS OBFS = ss, example.com, 443, encrypt-method=aes-256-gcm, password="password", obfs=http, obfs-host=cdn.example.com, udp-relay=false
+
+· ss:plugin-obfs-uri
+SS OBFS URI = ss, example.com, 443, encrypt-method=aes-256-gcm, password="password", obfs=http, obfs-host=cdn.example.com, obfs-uri=/path, udp-relay=false
+
+· ss:plugin-v2ray
+! SS V2Ray (ss/tcp) has no surge spelling; skipped.
+
+· ss:quantumult-x-line
+QX SS = ss, qx.example.com, 443, encrypt-method=aes-256-gcm, password="pass", udp-relay=true
+
+· ss:shadow-tls
+SS ShadowTLS = ss, example.com, 443, encrypt-method=aes-256-gcm, password="password", shadow-tls-password="secret", shadow-tls-sni=cdn.example.com, shadow-tls-version=3, udp-relay=false
+
+· ss:ssd-airport
+SSD HK = ss, ssd1.example.com, 443, encrypt-method=aes-256-gcm, password="airport-pass", obfs=http, obfs-host=cdn.example.com, udp-relay=true
+
+· ss:surge-config-section
+Section SS = ss, sec.example.com, 443, encrypt-method=chacha20-ietf-poly1305, password="pass", udp-relay=true
+Section SS 2 = ss, sec.example.com, 8443, encrypt-method=aes-256-gcm, password="pass2", udp-relay=true
+
+· ss:surge-line
+Surge SS = ss, sg.example.com, 443, encrypt-method=aes-256-gcm, password="pass", udp-relay=true
+
+━━ ssh 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssh:mihomo-yaml
+SSH = ssh, example.com, 22, username=root, password=secret, udp-relay=true
+
+━━ ssr — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+! Trojan gRPC (trojan/grpc) cannot be carried by surge; skipped.
+
+· trojan:httpupgrade
+! Upgrade (trojan/httpupgrade) cannot be carried by surge; skipped.
+
+· trojan:no-udp
+Trojan NoUDP = trojan, example.com, 443, password="password", tls=true, ws=false, sni=example.com, skip-cert-verify=true, udp-relay=false
+
+· trojan:tcp-tls
+Trojan = trojan, example.com, 443, password="password", tls=true, ws=false, sni=example.com, skip-cert-verify=false, udp-relay=true
+
+· trojan:ws-tls
+Trojan WS = trojan, example.com, 443, password="password", tls=true, ws=true, ws-path=/ws, ws-headers=Host:cdn.example.com, sni=example.com, skip-cert-verify=false, udp-relay=true
+
+· trojan:xray-json-httpupgrade
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by surge; skipped.
+
+━━ tuic 3/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· tuic:v4
+TUIC v4 = tuic, t4.example.com, 443, token=tuic-v4-token, sni=t4.example.com, skip-cert-verify=false, alpn=h3
+
+· tuic:v5
+TUIC = tuic-v5, example.com, 443, uuid=01890d4e-7d8d-7d0c-98fb-123456789abc, password=password, sni=example.com, skip-cert-verify=false, alpn=h3
+
+· tuic:surge-line-v4
+TUIC Line = tuic, tl.example.com, 443, token=line-token, sni=tl.example.com, skip-cert-verify=false, alpn=h3
+
+━━ vless — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vmess 4/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+! VMess gRPC (vmess/grpc) cannot be carried by surge; skipped.
+
+· vmess:h2-tls
+! VMess H2 (vmess/h2) cannot be carried by surge; skipped.
+
+· vmess:http-tcp
+! VMess HTTP (vmess/http) cannot be carried by surge; skipped.
+
+· vmess:tcp
+VMess TCP = vmess, example.com, 80, username=01890d4e-7d8d-7d0c-98fb-123456789abc, vmess-aead=true, tls=false, ws=false, udp-relay=true
+
+· vmess:v2ray-json-ws
+Legacy VMess = vmess, legacy.example.com, 443, username=01890d4e-7d8d-7d0c-98fb-123456789abc, vmess-aead=true, tls=true, ws=true, ws-path=/ws, ws-headers=Host:cdn.example.com, sni=cdn.example.com, skip-cert-verify=false, udp-relay=true
+
+· vmess:ws-early-data
+VMess WS ED = vmess, vmess.example.com, 443, username=01890d4e-7d8d-7d0c-98fb-123456789abc, vmess-aead=true, tls=true, ws=true, ws-path=/socket, ws-headers=Host:cdn.example.com, sni=cdn.example.com, skip-cert-verify=false, udp-relay=true
+
+· vmess:ws-tls
+VMess WS = vmess, example.com, 443, username=01890d4e-7d8d-7d0c-98fb-123456789abc, vmess-aead=true, tls=true, ws=true, ws-path=/ws, ws-headers=Host:cdn.example.com, sni=cdn.example.com, skip-cert-verify=false, udp-relay=true
+
+━━ wireguard — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

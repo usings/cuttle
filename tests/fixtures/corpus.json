@@ -1,0 +1,414 @@
+[
+  {
+    "protocol": "anytls",
+    "scopes": [
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray"
+    ],
+    "examples": [
+      {
+        "name": "anytls:uri",
+        "source": "anytls://password@example.com:443?sni=example.com&insecure=0#AnyTLS"
+      }
+    ]
+  },
+  {
+    "protocol": "http",
+    "scopes": [
+      "clash",
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "http:uri",
+        "source": "http://user:pass@example.com:8080#HTTP"
+      }
+    ]
+  },
+  {
+    "protocol": "hysteria",
+    "scopes": ["mihomo", "shadowrocket", "sing-box", "stash", "uri", "v2ray"],
+    "examples": [
+      {
+        "name": "hysteria:v1",
+        "source": "hysteria://example.com:443?protocol=udp&auth=secret&peer=example.com&upmbps=20&downmbps=100&alpn=h3#Hysteria"
+      }
+    ]
+  },
+  {
+    "protocol": "hysteria2",
+    "scopes": [
+      "egern",
+      "loon",
+      "mihomo",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray"
+    ],
+    "examples": [
+      {
+        "name": "hysteria2:uri",
+        "source": "hysteria2://hy2-auth@example.com:443?sni=example.com&insecure=0#Hysteria2"
+      }
+    ]
+  },
+  {
+    "protocol": "mieru",
+    "scopes": ["mihomo", "stash"],
+    "examples": [
+      {
+        "name": "mieru:mihomo-yaml",
+        "source": "proxies:\n  - {name: Mieru, type: mieru, server: mi.example.com, port: 2999, transport: TCP, username: user, password: pass}\n"
+      }
+    ]
+  },
+  {
+    "protocol": "snell",
+    "scopes": ["egern", "mihomo", "surfboard", "surge", "surge-mac"],
+    "examples": [
+      {
+        "name": "snell:v4",
+        "source": "proxies:\n  - {name: Snell, type: snell, server: example.com, port: 443, psk: secret, version: 4, obfs-opts: {mode: http, host: cdn.example.com}}\n"
+      }
+    ]
+  },
+  {
+    "protocol": "socks5",
+    "scopes": [
+      "clash",
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "socks5:uri",
+        "source": "socks5://user:pass@example.com:1080#Socks5"
+      }
+    ]
+  },
+  {
+    "protocol": "ss",
+    "scopes": [
+      "clash",
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "ss:2022-blake3",
+        "source": "ss://2022-blake3-aes-256-gcm:GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY%3D@example.com:443#SS%202022"
+      },
+      {
+        "name": "ss:aes-256-gcm",
+        "source": "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ@example.com:443#HK%20Node"
+      },
+      {
+        "name": "ss:base64-uri-list",
+        "source": "c3M6Ly9ZV1Z6TFRJMU5pMW5ZMjA2Y0dGemMzZHZjbVFAYjY0LmV4YW1wbGUuY29tOjQ0MyNCNjQlMjBTUw=="
+      },
+      {
+        "name": "ss:canonical-json",
+        "source": "[{\"type\": \"ss\", \"name\": \"Canonical SS\", \"server\": \"cj.example.com\", \"port\": 443, \"cipher\": \"aes-256-gcm\", \"password\": \"pass\", \"udp\": true}]"
+      },
+      {
+        "name": "ss:egern-yaml",
+        "source": "proxies:\n  - shadowsocks:\n      name: Egern SS\n      server: eg.example.com\n      port: 443\n      method: aes-256-gcm\n      password: pass\n      udp_relay: true\n"
+      },
+      {
+        "name": "ss:loon-line",
+        "source": "Loon SS = Shadowsocks,ln.example.com,443,aes-256-gcm,\"pass\",udp=true\n"
+      },
+      {
+        "name": "ss:mihomo-yaml",
+        "source": "proxies:\n  - {name: YAML SS, type: ss, server: example.com, port: 443, cipher: aes-256-gcm, password: password, udp: true}\n"
+      },
+      {
+        "name": "ss:plugin-obfs",
+        "source": "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ@example.com:443?plugin=obfs-local%3Bobfs%3Dhttp%3Bobfs-host%3Dcdn.example.com#SS%20OBFS"
+      },
+      {
+        "name": "ss:plugin-obfs-uri",
+        "source": "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ@example.com:443?plugin=obfs-local%3Bobfs%3Dhttp%3Bobfs-host%3Dcdn.example.com%3Bobfs-uri%3D%2Fpath#SS%20OBFS%20URI"
+      },
+      {
+        "name": "ss:plugin-v2ray",
+        "source": "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ@example.com:443?plugin=v2ray-plugin%3Btls%3Bhost%3Dcdn.example.com%3Bpath%3D%2Fws#SS%20V2Ray"
+      },
+      {
+        "name": "ss:quantumult-x-line",
+        "source": "shadowsocks=qx.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=QX SS\n"
+      },
+      {
+        "name": "ss:shadow-tls",
+        "source": "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ@example.com:443?plugin=shadow-tls%3Bhost%3Dcdn.example.com%3Bpassword%3Dsecret%3Bversion%3D3#SS%20ShadowTLS"
+      },
+      {
+        "name": "ss:ssd-airport",
+        "source": "ssd://eyJhaXJwb3J0IjoiRXhhbXBsZSBBaXIiLCJwb3J0Ijo0NDMsImVuY3J5cHRpb24iOiJhZXMtMjU2LWdjbSIsInBhc3N3b3JkIjoiYWlycG9ydC1wYXNzIiwicGx1Z2luIjoib2Jmcy1sb2NhbCIsInBsdWdpbl9vcHRpb25zIjoib2Jmcz1odHRwO29iZnMtaG9zdD1jZG4uZXhhbXBsZS5jb20iLCJzZXJ2ZXJzIjpbeyJzZXJ2ZXIiOiJzc2QxLmV4YW1wbGUuY29tIiwicmVtYXJrcyI6IlNTRCBISyJ9XX0="
+      },
+      {
+        "name": "ss:surge-config-section",
+        "source": "#!name=Example\n[General]\nloglevel = notify\n\n[Proxy]\nSection SS = ss, sec.example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=pass\nSection SS 2 = ss, sec.example.com, 8443, encrypt-method=aes-256-gcm, password=pass2\n\n[Rule]\nFINAL,DIRECT\n"
+      },
+      {
+        "name": "ss:surge-line",
+        "source": "Surge SS = ss, sg.example.com, 443, encrypt-method=aes-256-gcm, password=pass, udp-relay=true\n"
+      }
+    ]
+  },
+  {
+    "protocol": "ssh",
+    "scopes": ["egern", "mihomo", "sing-box", "stash", "surge", "surge-mac"],
+    "examples": [
+      {
+        "name": "ssh:mihomo-yaml",
+        "source": "proxies:\n  - {name: SSH, type: ssh, server: example.com, port: 22, username: root, password: secret}\n"
+      }
+    ]
+  },
+  {
+    "protocol": "ssr",
+    "scopes": ["clash", "loon", "mihomo", "quantumult-x", "shadowrocket", "stash", "uri", "v2ray"],
+    "examples": [
+      {
+        "name": "ssr:uri",
+        "source": "ssr://c3NyLmV4YW1wbGUuY29tOjgzODg6YXV0aF9hZXMxMjhfbWQ1OmFlcy0yNTYtY2ZiOnRsczEuMl90aWNrZXRfYXV0aDpjR0Z6YzNkdmNtUS8_b2Jmc3BhcmFtPVkyUnVMbVY0WVcxd2JHVXVZMjl0JnByb3RvcGFyYW09TmpRJnJlbWFya3M9VTFOU0lFNXZaR1U"
+      }
+    ]
+  },
+  {
+    "protocol": "trojan",
+    "scopes": [
+      "clash",
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "trojan:grpc-tls",
+        "source": "trojan://password@example.com:443?type=grpc&serviceName=edge&sni=example.com#Trojan%20gRPC"
+      },
+      {
+        "name": "trojan:httpupgrade",
+        "source": "trojan://secret@upgrade.example.com:443?security=tls&type=httpupgrade&host=cdn.example.com&path=%2Fupgrade%3Fed%3D1024&eh=X-Early-Data#Upgrade"
+      },
+      {
+        "name": "trojan:no-udp",
+        "source": "proxies:\n  - {name: Trojan NoUDP, type: trojan, server: example.com, port: 443, password: password, sni: example.com, udp: false, skip-cert-verify: true}\n"
+      },
+      {
+        "name": "trojan:tcp-tls",
+        "source": "trojan://password@example.com:443?sni=example.com#Trojan"
+      },
+      {
+        "name": "trojan:ws-tls",
+        "source": "trojan://password@example.com:443?type=ws&host=cdn.example.com&path=%2Fws&sni=example.com#Trojan%20WS"
+      },
+      {
+        "name": "trojan:xray-json-httpupgrade",
+        "source": "{\"outbounds\":[{\"tag\":\"Xray Upgrade\",\"protocol\":\"trojan\",\"settings\":{\"address\":\"xray.example.com\",\"port\":443,\"password\":\"secret\"},\"streamSettings\":{\"method\":\"httpupgrade\",\"security\":\"tls\",\"httpupgradeSettings\":{\"host\":\"cdn.example.com\",\"path\":\"/upgrade\",\"maxEarlyData\":512,\"earlyDataHeaderName\":\"X-Early-Data\"}}}]}"
+      }
+    ]
+  },
+  {
+    "protocol": "tuic",
+    "scopes": [
+      "egern",
+      "mihomo",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray"
+    ],
+    "examples": [
+      {
+        "name": "tuic:v4",
+        "source": "tuic://tuic-v4-token@t4.example.com:443?alpn=h3&congestion_control=bbr&sni=t4.example.com#TUIC%20v4"
+      },
+      {
+        "name": "tuic:v5",
+        "source": "tuic://01890d4e-7d8d-7d0c-98fb-123456789abc:password@example.com:443?sni=example.com&congestion_control=bbr&alpn=h3&udp_relay_mode=native#TUIC"
+      },
+      {
+        "name": "tuic:surge-line-v4",
+        "source": "TUIC Line = tuic, tl.example.com, 443, token=line-token, sni=tl.example.com, alpn=h3"
+      }
+    ]
+  },
+  {
+    "protocol": "vless",
+    "scopes": [
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "vless:grpc-multi",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=tls&type=grpc&serviceName=edge&mode=multi&sni=example.com#VLESS%20gRPC%20Multi"
+      },
+      {
+        "name": "vless:reality-grpc",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=reality&type=grpc&serviceName=grpc&sni=www.example.com&fp=chrome&pbk=public-key&sid=12ab#VLESS%20Reality"
+      },
+      {
+        "name": "vless:reality-tcp",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=reality&type=tcp&sni=www.example.com&fp=chrome&pbk=public-key&sid=12ab#VLESS%20Reality%20TCP"
+      },
+      {
+        "name": "vless:sing-box-json-reality-grpc",
+        "source": "{\"outbounds\":[{\"type\":\"vless\",\"tag\":\"Reality gRPC\",\"server\":\"grpc.example.com\",\"server_port\":443,\"uuid\":\"01890d4e-7d8d-7d0c-98fb-123456789abc\",\"tls\":{\"enabled\":true,\"server_name\":\"www.example.com\",\"utls\":{\"enabled\":true,\"fingerprint\":\"chrome\"},\"reality\":{\"enabled\":true,\"public_key\":\"public-key\",\"short_id\":\"12ab\"}},\"transport\":{\"type\":\"grpc\",\"service_name\":\"edge\"}}]}"
+      },
+      {
+        "name": "vless:vision-tcp",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=tls&type=tcp&sni=example.com&flow=xtls-rprx-vision#VLESS%20Vision"
+      },
+      {
+        "name": "vless:ws-alpn-fingerprint",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=tls&type=ws&host=cdn.example.com&path=%2Fws&sni=example.com&fp=chrome&alpn=h2%2Chttp%2F1.1#VLESS%20ALPN"
+      },
+      {
+        "name": "vless:ws-tls",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?encryption=none&security=tls&type=ws&host=cdn.example.com&path=%2Fws&sni=example.com#VLESS%20WS"
+      },
+      {
+        "name": "vless:xhttp-reality",
+        "source": "vless://01890d4e-7d8d-7d0c-98fb-123456789abc@example.com:443?security=reality&type=xhttp&sni=www.example.com&fp=chrome&pbk=public-key&sid=12ab&path=%2Fsplit&host=cdn.example.com&mode=auto#VLESS%20XHTTP"
+      }
+    ]
+  },
+  {
+    "protocol": "vmess",
+    "scopes": [
+      "clash",
+      "egern",
+      "loon",
+      "mihomo",
+      "quantumult-x",
+      "shadowrocket",
+      "sing-box",
+      "stash",
+      "surfboard",
+      "surge",
+      "surge-mac",
+      "uri",
+      "v2ray",
+      "xray"
+    ],
+    "examples": [
+      {
+        "name": "vmess:grpc-tls",
+        "source": "vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgZ1JQQyIsImFkZCI6ImV4YW1wbGUuY29tIiwicG9ydCI6IjQ0MyIsImlkIjoiMDE4OTBkNGUtN2Q4ZC03ZDBjLTk4ZmItMTIzNDU2Nzg5YWJjIiwiYWlkIjoiMCIsIm5ldCI6ImdycGMiLCJwYXRoIjoiZ3JwY3N2YyIsInRscyI6InRscyIsInNuaSI6ImV4YW1wbGUuY29tIn0="
+      },
+      {
+        "name": "vmess:h2-tls",
+        "source": "proxies:\n  - {name: VMess H2, type: vmess, server: example.com, port: 443, uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc, alterId: 0, cipher: auto, tls: true, servername: example.com, network: h2, h2-opts: {host: [cdn.example.com], path: /h2}}\n"
+      },
+      {
+        "name": "vmess:http-tcp",
+        "source": "proxies:\n  - {name: VMess HTTP, type: vmess, server: example.com, port: 80, uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc, alterId: 0, cipher: auto, network: http, http-opts: {method: GET, path: [/http], headers: {Host: [cdn.example.com]}}}\n"
+      },
+      {
+        "name": "vmess:tcp",
+        "source": "vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgVENQIiwiYWRkIjoiZXhhbXBsZS5jb20iLCJwb3J0IjoiODAiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJuZXQiOiJ0Y3AifQ=="
+      },
+      {
+        "name": "vmess:v2ray-json-ws",
+        "source": "{\"outbounds\":[{\"tag\":\"Legacy VMess\",\"protocol\":\"vmess\",\"settings\":{\"vnext\":[{\"address\":\"legacy.example.com\",\"port\":443,\"users\":[{\"id\":\"01890d4e-7d8d-7d0c-98fb-123456789abc\",\"alterId\":0,\"security\":\"auto\"}]}]},\"streamSettings\":{\"network\":\"ws\",\"security\":\"tls\",\"wsSettings\":{\"path\":\"/ws?ed=256\",\"headers\":{\"Host\":\"cdn.example.com\"}}}}]}"
+      },
+      {
+        "name": "vmess:ws-early-data",
+        "source": "vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgV1MgRUQiLCJhZGQiOiJ2bWVzcy5leGFtcGxlLmNvbSIsInBvcnQiOiI0NDMiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJuZXQiOiJ3cyIsImhvc3QiOiJjZG4uZXhhbXBsZS5jb20iLCJwYXRoIjoiL3NvY2tldD9lZD0yMDQ4IiwiZWgiOiJTZWMtV2ViU29ja2V0LVByb3RvY29sIiwidGxzIjoidGxzIn0="
+      },
+      {
+        "name": "vmess:ws-tls",
+        "source": "vmess://eyJ2IjoiMiIsInBzIjoiVk1lc3MgV1MiLCJhZGQiOiJleGFtcGxlLmNvbSIsInBvcnQiOiI0NDMiLCJpZCI6IjAxODkwZDRlLTdkOGQtN2QwYy05OGZiLTEyMzQ1Njc4OWFiYyIsImFpZCI6IjAiLCJuZXQiOiJ3cyIsImhvc3QiOiJjZG4uZXhhbXBsZS5jb20iLCJwYXRoIjoiL3dzIiwidGxzIjoidGxzIn0="
+      }
+    ]
+  },
+  {
+    "protocol": "wireguard",
+    "scopes": ["loon", "mihomo", "shadowrocket", "sing-box", "stash", "uri", "v2ray"],
+    "examples": [
+      {
+        "name": "wireguard:clash-yaml",
+        "source": "proxies:\n  - name: WireGuard\n    type: wireguard\n    server: wg.example.com\n    port: 51820\n    private-key: cHJpdmF0ZS1rZXk=\n    public-key: cHVibGljLWtleQ==\n    address:\n      - 10.0.0.2/24\n      - fd00::2/64\n"
+      },
+      {
+        "name": "wireguard:uri",
+        "source": "wireguard://cHJpdmF0ZS1rZXk=@example.com:51820/?address=10.0.0.2%2F32&publickey=cHVibGljLWtleQ%3D%3D&mtu=1420#WireGuard"
+      }
+    ]
+  }
+]

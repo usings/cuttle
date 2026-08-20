@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adversarial Review"
+  short_description: "Find change-induced failures with evidence"
+  default_prompt: "Use $adversarial-review to falsify this delta against its contract and report only change-induced, evidence-backed findings."

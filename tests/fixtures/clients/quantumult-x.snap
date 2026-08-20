@@ -1,0 +1,145 @@
+# Quantumult X — quantumult-x · text/plain; charset=utf-8 · .conf
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+anytls=example.com:443, password=password, over-tls=true, tls-host=example.com, tls-verification=true, udp-relay=true, tag=AnyTLS
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+http=example.com:8080, username=user, password=pass, udp-relay=false, tag=HTTP
+
+━━ hysteria — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ hysteria2 — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ mieru — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ snell — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+socks5=example.com:1080, username=user, password=pass, udp-relay=true, tag=Socks5
+
+━━ ss 15/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+shadowsocks=example.com:443, method=2022-blake3-aes-256-gcm, password=GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY=, udp-relay=false, tag=SS 2022
+
+· ss:aes-256-gcm
+shadowsocks=example.com:443, method=aes-256-gcm, password=password, udp-relay=false, tag=HK Node
+
+· ss:base64-uri-list
+shadowsocks=b64.example.com:443, method=aes-256-gcm, password=password, udp-relay=false, tag=B64 SS
+
+· ss:canonical-json
+shadowsocks=cj.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=Canonical SS
+
+· ss:egern-yaml
+shadowsocks=eg.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=Egern SS
+
+· ss:loon-line
+shadowsocks=ln.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=Loon SS
+
+· ss:mihomo-yaml
+shadowsocks=example.com:443, method=aes-256-gcm, password=password, udp-relay=true, tag=YAML SS
+
+· ss:plugin-obfs
+shadowsocks=example.com:443, method=aes-256-gcm, password=password, obfs=http, obfs-host=cdn.example.com, udp-relay=false, tag=SS OBFS
+
+· ss:plugin-obfs-uri
+shadowsocks=example.com:443, method=aes-256-gcm, password=password, obfs=http, obfs-host=cdn.example.com, obfs-uri=/path, udp-relay=false, tag=SS OBFS URI
+
+· ss:plugin-v2ray
+shadowsocks=example.com:443, method=aes-256-gcm, password=password, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, udp-relay=false, tag=SS V2Ray
+
+· ss:quantumult-x-line
+shadowsocks=qx.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=QX SS
+
+· ss:shadow-tls
+! SS ShadowTLS (ss/tcp) has no quantumult-x spelling; skipped.
+
+· ss:ssd-airport
+shadowsocks=ssd1.example.com:443, method=aes-256-gcm, password=airport-pass, obfs=http, obfs-host=cdn.example.com, udp-relay=true, tag=SSD HK
+
+· ss:surge-config-section
+shadowsocks=sec.example.com:443, method=chacha20-ietf-poly1305, password=pass, udp-relay=true, tag=Section SS
+shadowsocks=sec.example.com:8443, method=aes-256-gcm, password=pass2, udp-relay=true, tag=Section SS 2
+
+· ss:surge-line
+shadowsocks=sg.example.com:443, method=aes-256-gcm, password=pass, udp-relay=true, tag=Surge SS
+
+━━ ssh — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+shadowsocks=ssr.example.com:8388, method=aes-256-cfb, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=64, obfs=tls1.2_ticket_auth, obfs-host=cdn.example.com, udp-relay=true, tag=SSR Node
+
+━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+! Trojan gRPC (trojan/grpc) cannot be carried by quantumult-x; skipped.
+
+· trojan:httpupgrade
+! Upgrade (trojan/httpupgrade) cannot be carried by quantumult-x; skipped.
+
+· trojan:no-udp
+trojan=example.com:443, password=password, over-tls=true, tls-host=example.com, tls-verification=false, udp-relay=false, tag=Trojan NoUDP
+
+· trojan:tcp-tls
+trojan=example.com:443, password=password, over-tls=true, tls-host=example.com, tls-verification=true, udp-relay=true, tag=Trojan
+
+· trojan:ws-tls
+trojan=example.com:443, password=password, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, tls-host=example.com, tls-verification=true, udp-relay=true, tag=Trojan WS
+
+· trojan:xray-json-httpupgrade
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by quantumult-x; skipped.
+
+━━ tuic — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━ vless 4/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+! VLESS gRPC Multi (vless/grpc) cannot be carried by quantumult-x; skipped.
+
+· vless:reality-grpc
+! VLESS Reality (vless/grpc) cannot be carried by quantumult-x; skipped.
+
+· vless:reality-tcp
+vless=example.com:443, method=none, password=01890d4e-7d8d-7d0c-98fb-123456789abc, obfs=over-tls, tls-host=www.example.com, tls-verification=true, reality-base64-pubkey=public-key, reality-hex-shortid=12ab, udp-relay=true, tag=VLESS Reality TCP
+
+· vless:sing-box-json-reality-grpc
+! Reality gRPC (vless/grpc) cannot be carried by quantumult-x; skipped.
+
+· vless:vision-tcp
+vless=example.com:443, method=none, password=01890d4e-7d8d-7d0c-98fb-123456789abc, vless-flow=xtls-rprx-vision, obfs=over-tls, tls-host=example.com, tls-verification=true, udp-relay=true, tag=VLESS Vision
+
+· vless:ws-alpn-fingerprint
+vless=example.com:443, method=none, password=01890d4e-7d8d-7d0c-98fb-123456789abc, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, tls-host=example.com, tls-verification=true, udp-relay=true, tag=VLESS ALPN
+
+· vless:ws-tls
+vless=example.com:443, method=none, password=01890d4e-7d8d-7d0c-98fb-123456789abc, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, tls-host=example.com, tls-verification=true, udp-relay=true, tag=VLESS WS
+
+· vless:xhttp-reality
+! VLESS XHTTP (vless/xhttp) cannot be carried by quantumult-x; skipped.
+
+━━ vmess 5/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+! VMess gRPC (vmess/grpc) cannot be carried by quantumult-x; skipped.
+
+· vmess:h2-tls
+! VMess H2 (vmess/h2) cannot be carried by quantumult-x; skipped.
+
+· vmess:http-tcp
+vmess=example.com:80, method=chacha20-poly1305, password=01890d4e-7d8d-7d0c-98fb-123456789abc, aead=true, obfs=http, obfs-host=cdn.example.com, obfs-uri=/http, udp-relay=true, tag=VMess HTTP
+
+· vmess:tcp
+vmess=example.com:80, method=chacha20-poly1305, password=01890d4e-7d8d-7d0c-98fb-123456789abc, aead=true, udp-relay=true, tag=VMess TCP
+
+· vmess:v2ray-json-ws
+vmess=legacy.example.com:443, method=chacha20-poly1305, password=01890d4e-7d8d-7d0c-98fb-123456789abc, aead=true, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, tls-host=cdn.example.com, tls-verification=true, udp-relay=true, tag=Legacy VMess
+
+· vmess:ws-early-data
+vmess=vmess.example.com:443, method=chacha20-poly1305, password=01890d4e-7d8d-7d0c-98fb-123456789abc, aead=true, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/socket, tls-host=cdn.example.com, tls-verification=true, udp-relay=true, tag=VMess WS ED
+
+· vmess:ws-tls
+vmess=example.com:443, method=chacha20-poly1305, password=01890d4e-7d8d-7d0c-98fb-123456789abc, aead=true, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/ws, tls-host=cdn.example.com, tls-verification=true, udp-relay=true, tag=VMess WS
+
+━━ wireguard — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

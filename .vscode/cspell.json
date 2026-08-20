@@ -1,0 +1,25 @@
+{
+  "ignorePaths": [
+    "node_modules",
+    "dist"
+  ],
+  "words": [
+    "bumpp",
+    "cuttle",
+    "egern",
+    "esbuild",
+    "mieru",
+    "mihomo",
+    "obfs",
+    "oxfmt",
+    "oxlint",
+    "shadcn",
+    "tabler",
+    "tuic",
+    "vitejs",
+    "VLESS",
+    "vmess",
+    "workerd",
+    "xhttp"
+  ]
+}

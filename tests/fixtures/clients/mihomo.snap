@@ -1,0 +1,718 @@
+# Mihomo — mihomo · text/yaml; charset=utf-8 · .yaml
+# 15 protocols · 50 examples · regenerate: pnpm test:unit -u
+
+━━ anytls 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· anytls:uri
+proxies:
+  - type: anytls
+    name: AnyTLS
+    server: example.com
+    port: 443
+    skip-cert-verify: false
+    password: password
+    udp: true
+    sni: example.com
+
+━━ http 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· http:uri
+proxies:
+  - type: http
+    name: HTTP
+    server: example.com
+    port: 8080
+    username: user
+    password: pass
+    tls: false
+    udp: false
+
+━━ hysteria 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria:v1
+proxies:
+  - type: hysteria
+    name: Hysteria
+    server: example.com
+    port: 443
+    protocol: udp
+    alpn:
+      - h3
+    auth-str: secret
+    up: "20"
+    down: "100"
+    udp: true
+    sni: example.com
+
+━━ hysteria2 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· hysteria2:uri
+proxies:
+  - type: hysteria2
+    name: Hysteria2
+    server: example.com
+    port: 443
+    skip-cert-verify: false
+    password: hy2-auth
+    udp: true
+    sni: example.com
+
+━━ mieru 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· mieru:mihomo-yaml
+proxies:
+  - name: Mieru
+    type: mieru
+    server: mi.example.com
+    port: 2999
+    transport: TCP
+    username: user
+    password: pass
+    udp: true
+
+━━ snell 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· snell:v4
+proxies:
+  - name: Snell
+    type: snell
+    server: example.com
+    port: 443
+    psk: secret
+    version: 4
+    obfs-opts:
+      mode: http
+      host: cdn.example.com
+    udp: true
+
+━━ socks5 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· socks5:uri
+proxies:
+  - type: socks5
+    name: Socks5
+    server: example.com
+    port: 1080
+    username: user
+    password: pass
+    udp: true
+
+━━ ss 16/16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ss:2022-blake3
+proxies:
+  - type: ss
+    name: SS 2022
+    server: example.com
+    port: 443
+    cipher: 2022-blake3-aes-256-gcm
+    password: GsUEEDW0lXOgOwjPGmnJ2gsCZ3XxTNaSTKZOKhBLTIY=
+    udp: false
+
+· ss:aes-256-gcm
+proxies:
+  - type: ss
+    name: HK Node
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+
+· ss:base64-uri-list
+proxies:
+  - type: ss
+    name: B64 SS
+    server: b64.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+
+· ss:canonical-json
+proxies:
+  - type: ss
+    name: Canonical SS
+    server: cj.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:egern-yaml
+proxies:
+  - type: ss
+    name: Egern SS
+    server: eg.example.com
+    port: 443
+    udp: true
+    cipher: aes-256-gcm
+    password: pass
+
+· ss:loon-line
+proxies:
+  - type: ss
+    name: Loon SS
+    server: ln.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:mihomo-yaml
+proxies:
+  - name: YAML SS
+    type: ss
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: true
+
+· ss:plugin-obfs
+proxies:
+  - type: ss
+    name: SS OBFS
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:plugin-obfs-uri
+proxies:
+  - type: ss
+    name: SS OBFS URI
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:plugin-v2ray
+proxies:
+  - type: ss
+    name: SS V2Ray
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      host: cdn.example.com
+      path: /ws
+      tls: true
+
+· ss:quantumult-x-line
+proxies:
+  - type: ss
+    name: QX SS
+    server: qx.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+· ss:shadow-tls
+proxies:
+  - type: ss
+    name: SS ShadowTLS
+    server: example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: password
+    udp: false
+    plugin: shadow-tls
+    plugin-opts:
+      host: cdn.example.com
+      password: secret
+      version: 3
+
+· ss:ssd-airport
+proxies:
+  - type: ss
+    name: SSD HK
+    server: ssd1.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: airport-pass
+    udp: true
+    plugin: obfs
+    plugin-opts:
+      mode: http
+      host: cdn.example.com
+
+· ss:surge-config-section
+proxies:
+  - type: ss
+    name: Section SS
+    server: sec.example.com
+    port: 443
+    cipher: chacha20-ietf-poly1305
+    password: pass
+    udp: true
+  - type: ss
+    name: Section SS 2
+    server: sec.example.com
+    port: 8443
+    cipher: aes-256-gcm
+    password: pass2
+    udp: true
+
+· ss:surge-line
+proxies:
+  - type: ss
+    name: Surge SS
+    server: sg.example.com
+    port: 443
+    cipher: aes-256-gcm
+    password: pass
+    udp: true
+
+━━ ssh 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssh:mihomo-yaml
+proxies:
+  - name: SSH
+    type: ssh
+    server: example.com
+    port: 22
+    username: root
+    password: secret
+    udp: true
+
+━━ ssr 1/1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ssr:uri
+proxies:
+  - type: ssr
+    name: SSR Node
+    server: ssr.example.com
+    port: 8388
+    protocol: auth_aes128_md5
+    cipher: aes-256-cfb
+    obfs: tls1.2_ticket_auth
+    password: password
+    protocol-param: "64"
+    obfs-param: cdn.example.com
+    udp: true
+
+━━ trojan 6/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· trojan:grpc-tls
+proxies:
+  - type: trojan
+    name: Trojan gRPC
+    server: example.com
+    port: 443
+    network: grpc
+    udp: true
+    password: password
+    grpc-opts:
+      grpc-service-name: edge
+    sni: example.com
+
+· trojan:httpupgrade
+proxies:
+  - type: trojan
+    name: Upgrade
+    server: upgrade.example.com
+    port: 443
+    network: ws
+    udp: true
+    password: secret
+    sni: cdn.example.com
+    ws-opts:
+      path: /upgrade
+      headers:
+        Host: cdn.example.com
+      v2ray-http-upgrade: true
+      v2ray-http-upgrade-fast-open: true
+
+· trojan:no-udp
+proxies:
+  - name: Trojan NoUDP
+    type: trojan
+    server: example.com
+    port: 443
+    password: password
+    udp: false
+    skip-cert-verify: true
+    network: tcp
+    sni: example.com
+
+· trojan:tcp-tls
+proxies:
+  - type: trojan
+    name: Trojan
+    server: example.com
+    port: 443
+    network: tcp
+    udp: true
+    password: password
+    sni: example.com
+
+· trojan:ws-tls
+proxies:
+  - type: trojan
+    name: Trojan WS
+    server: example.com
+    port: 443
+    network: ws
+    udp: true
+    password: password
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    sni: example.com
+
+· trojan:xray-json-httpupgrade
+proxies:
+  - type: trojan
+    name: Xray Upgrade
+    server: xray.example.com
+    port: 443
+    password: secret
+    network: ws
+    udp: true
+    sni: cdn.example.com
+    ws-opts:
+      path: /upgrade
+      headers:
+        Host: cdn.example.com
+      v2ray-http-upgrade: true
+      v2ray-http-upgrade-fast-open: true
+
+━━ tuic 3/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· tuic:v4
+proxies:
+  - type: tuic
+    name: TUIC v4
+    server: t4.example.com
+    port: 443
+    alpn:
+      - h3
+    udp: true
+    sni: t4.example.com
+    congestion-controller: bbr
+    token: tuic-v4-token
+
+· tuic:v5
+proxies:
+  - type: tuic
+    name: TUIC
+    server: example.com
+    port: 443
+    password: password
+    alpn:
+      - h3
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    udp: true
+    sni: example.com
+    congestion-controller: bbr
+    udp-relay-mode: native
+    version: 5
+
+· tuic:surge-line-v4
+proxies:
+  - type: tuic
+    name: TUIC Line
+    server: tl.example.com
+    port: 443
+    token: line-token
+    udp: true
+    alpn:
+      - h3
+    sni: tl.example.com
+
+━━ vless 8/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vless:grpc-multi
+proxies:
+  - type: vless
+    name: VLESS gRPC Multi
+    server: example.com
+    port: 443
+    network: grpc
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    grpc-opts:
+      grpc-service-name: edge
+    servername: example.com
+
+· vless:reality-grpc
+proxies:
+  - type: vless
+    name: VLESS Reality
+    server: example.com
+    port: 443
+    network: grpc
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: public-key
+      short-id: 12ab
+    grpc-opts:
+      grpc-service-name: grpc
+    servername: www.example.com
+
+· vless:reality-tcp
+proxies:
+  - type: vless
+    name: VLESS Reality TCP
+    server: example.com
+    port: 443
+    network: tcp
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: public-key
+      short-id: 12ab
+    servername: www.example.com
+
+· vless:sing-box-json-reality-grpc
+proxies:
+  - type: vless
+    name: Reality gRPC
+    server: grpc.example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    tls: true
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: public-key
+      short-id: 12ab
+    network: grpc
+    grpc-opts:
+      grpc-service-name: edge
+    udp: true
+    servername: www.example.com
+
+· vless:vision-tcp
+proxies:
+  - type: vless
+    name: VLESS Vision
+    server: example.com
+    port: 443
+    network: tcp
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    flow: xtls-rprx-vision
+    servername: example.com
+
+· vless:ws-alpn-fingerprint
+proxies:
+  - type: vless
+    name: VLESS ALPN
+    server: example.com
+    port: 443
+    network: ws
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    client-fingerprint: chrome
+    alpn:
+      - h2
+      - http/1.1
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    servername: example.com
+
+· vless:ws-tls
+proxies:
+  - type: vless
+    name: VLESS WS
+    server: example.com
+    port: 443
+    network: ws
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    encryption: none
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    servername: example.com
+
+· vless:xhttp-reality
+proxies:
+  - type: vless
+    name: VLESS XHTTP
+    server: example.com
+    port: 443
+    network: xhttp
+    tls: true
+    udp: true
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: public-key
+      short-id: 12ab
+    xhttp-opts:
+      host: cdn.example.com
+      path: /split
+      mode: auto
+    servername: www.example.com
+
+━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· vmess:grpc-tls
+proxies:
+  - type: vmess
+    name: VMess gRPC
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: grpc
+    tls: true
+    udp: true
+    grpc-opts:
+      grpc-service-name: grpcsvc
+    servername: example.com
+
+· vmess:h2-tls
+proxies:
+  - name: VMess H2
+    type: vmess
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    tls: true
+    network: h2
+    h2-opts:
+      host:
+        - cdn.example.com
+      path: /h2
+    udp: true
+    servername: example.com
+
+· vmess:http-tcp
+proxies:
+  - name: VMess HTTP
+    type: vmess
+    server: example.com
+    port: 80
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: http
+    http-opts:
+      method: GET
+      path:
+        - /http
+      headers:
+        Host:
+          - cdn.example.com
+    udp: true
+
+· vmess:tcp
+proxies:
+  - type: vmess
+    name: VMess TCP
+    server: example.com
+    port: 80
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: tcp
+    tls: false
+    udp: true
+
+· vmess:v2ray-json-ws
+proxies:
+  - type: vmess
+    name: Legacy VMess
+    server: legacy.example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    cipher: auto
+    alterId: 0
+    network: ws
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+      max-early-data: 256
+    tls: true
+    udp: true
+    servername: cdn.example.com
+
+· vmess:ws-early-data
+proxies:
+  - type: vmess
+    name: VMess WS ED
+    server: vmess.example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: ws
+    tls: true
+    udp: true
+    ws-opts:
+      path: /socket
+      headers:
+        Host: cdn.example.com
+      max-early-data: 2048
+      early-data-header-name: Sec-WebSocket-Protocol
+    servername: cdn.example.com
+
+· vmess:ws-tls
+proxies:
+  - type: vmess
+    name: VMess WS
+    server: example.com
+    port: 443
+    uuid: 01890d4e-7d8d-7d0c-98fb-123456789abc
+    alterId: 0
+    cipher: auto
+    network: ws
+    tls: true
+    udp: true
+    ws-opts:
+      path: /ws
+      headers:
+        Host: cdn.example.com
+    servername: cdn.example.com
+
+━━ wireguard 2/2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· wireguard:clash-yaml
+proxies:
+  - name: WireGuard
+    type: wireguard
+    server: wg.example.com
+    port: 51820
+    private-key: cHJpdmF0ZS1rZXk=
+    public-key: cHVibGljLWtleQ==
+    address:
+      - 10.0.0.2/24
+      - fd00::2/64
+    udp: true
+
+· wireguard:uri
+proxies:
+  - type: wireguard
+    name: WireGuard
+    server: example.com
+    port: 51820
+    mtu: 1420
+    private-key: cHJpdmF0ZS1rZXk=
+    public-key: cHVibGljLWtleQ==
+    udp: true
+    ip: 10.0.0.2/32

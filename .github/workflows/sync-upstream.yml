@@ -1,0 +1,147 @@
+name: Sync upstream
+
+# Lives in the upstream repository too, where it deliberately does nothing: the first step asks
+# GitHub what this repository follows, and only a fork has an answer.
+#
+# GitHub has no cross-repository trigger, so an upstream tag cannot reach a fork's workflows. This
+# polls instead, and only acts when the upstream has a release tag the fork does not.
+
+on:
+  schedule:
+    - cron: "37 4 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Resolve what this repository follows
+        id: upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Asked of the API rather than read from the event payload: `github.event.repository` is
+          # not documented for `schedule`, and a guard that silently reads empty would skip every
+          # fork's sync without ever failing.
+          #
+          # `source`, not `parent`: source is the root of the fork network, so a fork of a fork
+          # follows the main repository instead of the fork it happened to come from. For a direct
+          # fork the two are the same.
+          #
+          # A plain assignment, not `read <<<`: a command substitution inside a herestring can
+          # fail without `set -e` noticing, which would carry an empty repository and branch name
+          # into the steps below instead of stopping here.
+          info=$(
+            gh api "repos/${GITHUB_REPOSITORY}" \
+              --jq '"\(.source.full_name // "-")\t\(.default_branch)"'
+          )
+          source=${info%%$'\t'*}
+          branch=${info#*$'\t'}
+          if [ -z "$branch" ] || [ -z "$source" ]; then
+            echo "::error::Could not read this repository's fork relationship from the API."
+            exit 1
+          fi
+          if [ "$source" = "-" ]; then
+            echo "::notice::This repository is the upstream of its network, so it follows nothing."
+            echo "fork=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Following $source, onto branch $branch."
+          {
+            echo "fork=true"
+            echo "repo=$source"
+            echo "branch=$branch"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        if: steps.upstream.outputs.fork == 'true'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Take the newest upstream release the fork is missing
+        id: sync
+        if: steps.upstream.outputs.fork == 'true'
+        env:
+          UPSTREAM: ${{ steps.upstream.outputs.repo }}
+          BRANCH: ${{ steps.upstream.outputs.branch }}
+        run: |
+          set -euo pipefail
+          upstream="https://github.com/${UPSTREAM}.git"
+
+          # Release tags only. A prerelease must not deploy itself to every fork, and `sort -V`
+          # orders prerelease suffixes in a way nobody should depend on.
+          #
+          # One `sed` rather than a `grep` in the pipeline: under `pipefail` a `grep` that matches
+          # nothing fails the whole substitution, which killed this script before it could report an
+          # upstream that has simply not tagged a release yet.
+          newest=$(
+            git ls-remote --tags --refs "$upstream" 'v*' \
+              | sed -nE 's#^.*refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$#\1#p' \
+              | sort -V \
+              | tail -1
+          )
+          if [ -z "$newest" ]; then
+            echo "::notice::${UPSTREAM} has published no stable release tag yet."
+            echo "synced=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git rev-parse -q --verify "refs/tags/${newest}^{commit}" >/dev/null; then
+            echo "::notice::Already holding ${newest}; nothing to sync."
+            echo "synced=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # The tagged commit, not the tip of the upstream branch: whatever upstream pushed after
+          # tagging is not part of the release this fork is following.
+          git fetch --quiet "$upstream" "refs/tags/${newest}:refs/tags/${newest}"
+          target=$(git rev-parse "refs/tags/${newest}^{commit}")
+          current=$(git rev-parse HEAD)
+
+          # Strict fast-forward. A fork carrying its own commits is not something to overwrite, so
+          # this stops and says so rather than resetting someone's work away.
+          if ! git merge-base --is-ancestor "$current" "$target"; then
+            echo "::error::${BRANCH} has diverged from ${UPSTREAM}, so ${newest} cannot be fast-forwarded onto it. Reconcile this fork by hand, or reset it onto the upstream, and this workflow will resume."
+            exit 1
+          fi
+
+          git push origin "${target}:refs/heads/${BRANCH}"
+          git push origin "refs/tags/${newest}"
+          echo "Synced ${BRANCH} to ${newest} (${target})."
+          {
+            echo "synced=true"
+            echo "tag=$newest"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the synced release
+        if: steps.sync.outputs.synced == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.sync.outputs.tag }}
+          # Presence is all that is read; the values never leave this step.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CUTTLE_TOKEN: ${{ secrets.CUTTLE_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Every secret the release workflow needs, so a fork that cannot deploy is told that
+          # rather than being handed a failed deployment.
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ] || [ -z "${CUTTLE_TOKEN:-}" ]; then
+            echo "::notice::${TAG} is synced. Deployment was skipped because CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and CUTTLE_TOKEN are not all set on this fork."
+            exit 0
+          fi
+          # Dispatched rather than left to the tag push above: an event raised by GITHUB_TOKEN does
+          # not start a workflow, and `workflow_dispatch` is one of the few exceptions. This also
+          # keeps the release from running twice.
+          gh workflow run release.yml --ref "$TAG"
+          echo "Dispatched release.yml at ${TAG}."
