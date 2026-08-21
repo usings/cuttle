@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 import type { ComponentType, RefObject } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useConnected } from "@/features/session"
+import { useTokenUsable } from "@/features/session"
 
 export type AppPage = "extract" | "subscriptions"
 
@@ -36,8 +36,8 @@ const NAV_ENTRIES: NavEntry[] = [
   },
 ]
 
-export function visibleNavEntries(connected: boolean) {
-  return NAV_ENTRIES.filter((entry) => connected || !entry.admin)
+export function visibleNavEntries(tokenUsable: boolean) {
+  return NAV_ENTRIES.filter((entry) => tokenUsable || !entry.admin)
 }
 
 export function NavMenu({
@@ -47,7 +47,7 @@ export function NavMenu({
   active: AppPage
   anchor: RefObject<HTMLElement | null>
 }) {
-  const connected = useConnected()
+  const tokenUsable = useTokenUsable()
   const [open, setOpen] = useState(false)
 
   return (
@@ -76,7 +76,7 @@ export function NavMenu({
         className="w-(--anchor-width) gap-0 border-b p-0 ring-0"
       >
         <nav className="flex flex-col">
-          {visibleNavEntries(connected).map((entry) => (
+          {visibleNavEntries(tokenUsable).map((entry) => (
             <Link
               key={entry.page}
               to={entry.to}

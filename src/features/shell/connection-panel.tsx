@@ -1,18 +1,12 @@
 import { IconPlugConnected, IconPlugConnectedX } from "@tabler/icons-react"
-import { useNavigate, useSearch } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import { SideSurface } from "@/components/side-surface"
 import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  hasAdminToken,
-  useAdminBusy,
-  useAdminToken,
-  useConnect,
-  useConnected,
-  useDisconnect,
-} from "@/features/session"
+import { hasToken, useConnect, useDisconnect, useToken, useTokenUsable } from "@/features/session"
+import { useConnectionPanel } from "./connection-panel-state"
 
 export function ConnectionDot({ connected }: { connected: boolean }) {
   return (
@@ -26,22 +20,17 @@ export function ConnectionDot({ connected }: { connected: boolean }) {
 
 export function ConnectionPanel() {
   const navigate = useNavigate()
-  // `strict: false`: this panel is mounted from `AppShell`, under both `/` and `/subscriptions`, so
-  // it cannot be bound to either route's own search type — only the root's `connect` matters here.
-  const search = useSearch({ strict: false })
-  const adminToken = useAdminToken()
-  const connected = useConnected()
-  const connectionOpen = search.connect === true
-  const loading = useAdminBusy()
+  const adminToken = useToken()
+  const tokenUsable = useTokenUsable()
+  const { open: connectionOpen, setOpen: setConnectionOpen } = useConnectionPanel()
   const connect = useConnect()
   const disconnect = useDisconnect()
   // The field edits a draft: nothing reaches the session, sessionStorage or the admin API until the
   // footer button commits it, so half-typed keys never drop the connection that is already working.
   const [draft, setDraft] = useState(adminToken)
-  const [failure, setFailure] = useState("")
-  // The key on screen is the one already working, so there is nothing to commit — what the session
-  // still needs from here is the way out of it.
-  const committed = connected && draft === adminToken
+  // The key on screen is the one the session is already using, so there is nothing to commit — what
+  // the session still needs from here is the way out of it.
+  const committed = tokenUsable && draft === adminToken
 
   // Reopening the panel, or the session's key changing under it, discards whatever was half-typed.
   // Adjusted while rendering rather than in an effect: the reset belongs to the same commit the
@@ -51,11 +40,6 @@ export function ConnectionPanel() {
   if (tracked.adminToken !== adminToken || tracked.connectionOpen !== connectionOpen) {
     setTracked({ adminToken, connectionOpen })
     setDraft(adminToken)
-    setFailure("")
-  }
-
-  function setConnectionOpen(open: boolean) {
-    void navigate({ to: ".", search: (prev) => ({ ...prev, connect: open ? true : undefined }) })
   }
 
   // The panel lives in the URL, so one navigation both closes it and leaves the page the session
@@ -67,11 +51,12 @@ export function ConnectionPanel() {
     void navigate({ to: "/", replace: true, viewTransition: true })
   }
 
-  async function commit() {
-    const reason = await connect(draft)
-    // Failures stay inline in the field; a success has nothing left to say here, so the panel goes.
-    setFailure(reason ?? "")
-    if (!reason) setConnectionOpen(false)
+  // Committing a key asks the API nothing (`session/queries.ts`), so there is no verdict to wait for
+  // and none to report: the panel has said everything it can and goes. What the key is worth shows
+  // up where it is spent — the first admin read either returns the page or takes the reader off it.
+  function commit() {
+    connect(draft)
+    setConnectionOpen(false)
   }
 
   return (
@@ -88,15 +73,15 @@ export function ConnectionPanel() {
             断开连接
           </Button>
         ) : (
-          <Button onClick={() => void commit()} disabled={loading || !hasAdminToken(draft)}>
+          <Button onClick={commit} disabled={!hasToken(draft)}>
             <IconPlugConnected data-icon="inline-start" />
-            {loading ? "连接中" : "连接"}
+            连接
           </Button>
         )
       }
     >
       <div className="flex flex-col gap-6">
-        <Field data-invalid={Boolean(failure)}>
+        <Field>
           <FieldLabel htmlFor="admin-token">管理密钥</FieldLabel>
           <Input
             id="admin-token"
@@ -104,13 +89,8 @@ export function ConnectionPanel() {
             autoComplete="off"
             value={draft}
             placeholder="CUTTLE_TOKEN"
-            aria-invalid={Boolean(failure)}
-            onChange={(event) => {
-              setDraft(event.target.value)
-              setFailure("")
-            }}
+            onChange={(event) => setDraft(event.target.value)}
           />
-          {failure ? <FieldError>{failure}</FieldError> : null}
         </Field>
       </div>
     </SideSurface>

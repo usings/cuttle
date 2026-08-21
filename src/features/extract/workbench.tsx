@@ -28,7 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { EMPTY_RULE_CHAIN, RuleChain, ruleChainToProcessors } from "@/features/rules"
 import type { RuleChainState } from "@/features/rules"
-import { useConnected } from "@/features/session"
+import { useTokenUsable } from "@/features/session"
 import type { WorkbenchHandoff } from "@/features/session"
 import { SOURCE_TYPE_LABELS } from "@/features/subscriptions/source-types"
 import { splitSourceUrls } from "@/features/subscriptions/source-urls"
@@ -65,7 +65,7 @@ const routeApi = getRouteApi("/")
 export function ExtractWorkbench() {
   const navigate = routeApi.useNavigate()
   const search = routeApi.useSearch()
-  const connected = useConnected()
+  const tokenUsable = useTokenUsable()
   const readRemoteSource = useReadRemoteSource()
   const { generated, errorMessage, generating, run } = useExtractRun()
 
@@ -103,7 +103,7 @@ export function ExtractWorkbench() {
     void navigate({ search: (prev) => ({ ...prev, step }), replace: true })
   }
 
-  const remoteMode = connected && sourceMode === "remote"
+  const remoteMode = tokenUsable && sourceMode === "remote"
   const input = remoteMode ? sourceUrl : source
 
   const inputs: ExtractInputs = { source: input, target, processors }
@@ -207,7 +207,7 @@ export function ExtractWorkbench() {
   )
 
   const primaryButton =
-    fresh && connected ? (
+    fresh && tokenUsable ? (
       <Button className="max-md:h-11 max-md:px-4.5" onClick={saveAsSubscription}>
         <IconDatabase data-icon="inline-start" />
         存为订阅
@@ -295,7 +295,7 @@ export function ExtractWorkbench() {
                 variant={remoteMode ? "default" : "outline"}
                 size="xs"
                 aria-pressed={remoteMode}
-                disabled={!connected}
+                disabled={!tokenUsable}
                 onClick={() => setSourceMode("remote")}
               >
                 {SOURCE_TYPE_LABELS.remote}

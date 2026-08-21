@@ -1,45 +1,29 @@
 import { IconLoader2 } from "@tabler/icons-react"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { useRef, useState } from "react"
 import type { ReactNode } from "react"
 import { Separator } from "@/components/ui/separator"
-import { useConnected, useRestored } from "@/features/session"
+import { useTokenUsable } from "@/features/session"
+import { useHydrated } from "@/shared/hydrated"
 import { ConnectionDot, ConnectionPanel } from "./connection-panel"
+import { useConnectionPanel } from "./connection-panel-state"
 import { NavMenu, visibleNavEntries } from "./navigation"
 import type { AppPage } from "./navigation"
 
 export function AppShell({ active, children }: { active: AppPage; children: ReactNode }) {
-  const navigate = useNavigate()
-  const connected = useConnected()
-  const restored = useRestored()
+  const tokenUsable = useTokenUsable()
+  const { setOpen: setPanelOpen } = useConnectionPanel()
   const [maskGone, setMaskGone] = useState(false)
   const header = useRef<HTMLElement>(null)
-
-  // Root-level search param: this shell mounts under both `/` and `/subscriptions`, so nothing
-  // narrower than the root route can own whether the connection panel is open. `to: "."` is what
-  // buys loosely-typed search here instead of a `from` this component cannot commit to.
-  function openConnectPanel() {
-    void navigate({ to: ".", search: (prev) => ({ ...prev, connect: true }) })
-  }
+  const hydrated = useHydrated()
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
-      {/* The key lives in sessionStorage, which no server render and no hydration render can read.
-          Until the lookup returns, every session-shaped thing on screen would be a claim about a
-          session nobody has looked up yet: the header would read 未连接 and the navigation would
-          drop the admin entry, both only to correct themselves a frame later. The mask lifts when
-          `restoreAdminToken` reports back — which is also the moment the page becomes interactive,
-          so nothing under it was worth touching earlier either.
-
-          It fades rather than cuts: what is underneath on the admin page is another wait, and two
-          waits swapped in one frame read as a flicker rather than as progress. `pointer-events-none`
-          comes with the fade, so the frame is live for the whole of it; the element leaves the tree
-          when the transition reports it is over. */}
       {maskGone ? null : (
         <div
           role="status"
           aria-label="正在确认管理连接"
-          data-settled={restored}
+          data-settled={hydrated}
           onTransitionEnd={() => setMaskGone(true)}
           className="fixed inset-0 z-[60] flex items-center justify-center bg-background transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[settled=true]:pointer-events-none data-[settled=true]:opacity-0"
         >
@@ -58,7 +42,7 @@ export function AppShell({ active, children }: { active: AppPage; children: Reac
           </Link>
 
           <div className="hidden items-center gap-3 md:flex lg:gap-3.5">
-            {visibleNavEntries(connected).map((entry) => (
+            {visibleNavEntries(tokenUsable).map((entry) => (
               <Link
                 key={entry.page}
                 to={entry.to}
@@ -74,11 +58,11 @@ export function AppShell({ active, children }: { active: AppPage; children: Reac
             <Separator orientation="vertical" className="h-3.5 lg:h-4" />
             <button
               type="button"
-              onClick={openConnectPanel}
+              onClick={() => setPanelOpen(true)}
               className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.12em] text-muted-foreground uppercase transition-colors hover:text-foreground"
             >
-              <ConnectionDot connected={connected} />
-              {connected ? "已连接" : "未连接"}
+              <ConnectionDot connected={tokenUsable} />
+              {tokenUsable ? "已连接" : "未连接"}
             </button>
           </div>
 
@@ -86,12 +70,12 @@ export function AppShell({ active, children }: { active: AppPage; children: Reac
             <button
               type="button"
               aria-label="管理连接"
-              onClick={openConnectPanel}
+              onClick={() => setPanelOpen(true)}
               className="inline-flex size-10 items-center justify-center"
             >
-              <ConnectionDot connected={connected} />
+              <ConnectionDot connected={tokenUsable} />
             </button>
-            {connected ? <NavMenu active={active} anchor={header} /> : null}
+            {tokenUsable ? <NavMenu active={active} anchor={header} /> : null}
           </div>
         </div>
       </header>

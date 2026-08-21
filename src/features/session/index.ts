@@ -1,11 +1,4 @@
-export {
-  hasAdminToken,
-  restoreAdminToken,
-  useAdminToken,
-  useHasAdminToken,
-  useConnected,
-  useRestored,
-} from "./admin-session"
-export { useAdminBusy } from "./connection"
+export { hasToken, useToken, useTokenRefused, useTokenUsable } from "./token"
+export { noteAuthFailure } from "./auth-failure"
 export { useConnect, useDisconnect } from "./queries"
 export type { WorkbenchHandoff } from "./handoff"

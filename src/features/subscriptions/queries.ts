@@ -3,17 +3,12 @@ import type { QueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import type { TargetId } from "@/core/nodes"
 import type { SubscriptionDraft, SubscriptionSummary } from "@/core/subscriptions"
-import { hasAdminToken, setConnected, useAdminToken } from "@/features/session/admin-session"
-import { ApiError } from "@/shared/api-error"
+import { useTokenUsable } from "@/features/session"
 import { showError, showSuccess } from "@/shared/notify"
 import type { CredentialPayload } from "./api/contract"
 import * as api from "./api/server-fn"
 
 const NO_SUBSCRIPTIONS: SubscriptionSummary[] = []
-
-export function noteAuthFailure(error: unknown) {
-  if (error instanceof ApiError && error.code === "unauthorized") setConnected(false)
-}
 
 // Credentials stay out of query keys; connect clears the cache before changing credentials.
 export const keys = {
@@ -42,8 +37,9 @@ function invalidateSubscriptions(client: QueryClient) {
 }
 
 export function useSubscriptions() {
-  const token = useAdminToken()
-  const query = useQuery({ ...subscriptionsQuery(), enabled: hasAdminToken(token) })
+  // A key the API has already refused buys nothing here: the gate is about to take this page away, so
+  // firing the read would only spend a round trip to be told again.
+  const query = useQuery({ ...subscriptionsQuery(), enabled: useTokenUsable() })
   return {
     failure: query.error,
     items: query.data ?? NO_SUBSCRIPTIONS,

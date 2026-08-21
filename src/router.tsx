@@ -1,6 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query"
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
-import { noteAuthFailure } from "@/features/subscriptions/queries"
+import { noteAuthFailure } from "@/features/session"
 import { routeTree } from "./routeTree.gen"
 
 function createQueryClient() {

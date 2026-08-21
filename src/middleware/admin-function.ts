@@ -1,7 +1,7 @@
 import { isNotFound, isRedirect } from "@tanstack/react-router"
 import { createMiddleware } from "@tanstack/react-start"
 import { getRequest } from "@tanstack/react-start/server"
-import { readAdminToken } from "@/features/session/admin-session"
+import { readToken } from "@/features/session/token"
 import { authorizeAdminRequest } from "@/server/admin-auth"
 import { AdminFailure, INTERNAL_MESSAGE, UNAUTHORIZED_MESSAGE } from "@/shared/admin-error"
 import type { AdminErrorCode } from "@/shared/admin-error"
@@ -12,7 +12,7 @@ import { apiErrorFromMessage, messageWithCode } from "@/shared/api-error"
 export const adminFunctionMiddleware = createMiddleware({ type: "function" })
   .client(async ({ next }) => {
     try {
-      return await next({ headers: { Authorization: `Bearer ${readAdminToken()}` } })
+      return await next({ headers: { Authorization: `Bearer ${readToken()}` } })
     } catch (error) {
       throw apiErrorFromMessage(error)
     }

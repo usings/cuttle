@@ -1,9 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query"
 import type { QueryClient } from "@tanstack/react-query"
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router"
-import { useEffect } from "react"
 import { Toaster } from "@/components/ui/toast"
-import { restoreAdminToken } from "@/features/session"
 import { NotFound } from "@/features/shell"
 import appCss from "../styles.css?url"
 
@@ -44,10 +42,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { queryClient } = Route.useRouteContext()
-
-  useEffect(() => {
-    restoreAdminToken()
-  }, [])
 
   return (
     <html lang="zh-CN" suppressHydrationWarning>
