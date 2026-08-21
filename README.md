@@ -110,11 +110,11 @@ https://cuttle.your-worker.workers.dev/subscribe/<token>?target=sing-box
 
 ## 自托管部署
 
-推荐通过 **Fork + GitHub Actions** 部署。本机无需安装开发环境；工作流会自动创建 D1 数据库、应用迁移、上传密钥并发布 Worker。
+推荐使用 **Fork + GitHub Actions** 的方式进行部署。整个过程无需在本机安装开发环境；GitHub Actions 会自动完成 D1 数据库创建、数据库迁移、密钥上传以及 Worker 发布。
 
 ### 1. Fork 仓库并启用 Actions
 
-Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。GitHub 默认不会为新建的 fork 启用 Actions。
+Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。（GitHub 默认不会为新建的 fork 启用 Actions，因此需要手动开启）
 
 ### 2. 准备 Cloudflare 凭据
 
@@ -126,16 +126,14 @@ Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。Gi
 
 **API Token**
 
-推荐创建[账户令牌（account-owned token）](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/#create-an-account-owned-token)。它归账户所有，更适合 CI/CD，不会因某位成员离开而失效。
+创建[账户令牌（account-owned token）](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/#create-an-account-owned-token)。
 
-可以直接使用 **Edit Cloudflare Workers** 模板。若使用自定义令牌，至少需要以下权限：
+可以基于 **Edit Cloudflare Workers** 模板创建，并确保至少拥有以下权限：
 
 | 权限            | 级别 | 用途                  |
 | --------------- | ---- | --------------------- |
 | Workers Scripts | Edit | 发布 Worker、上传密钥 |
 | D1              | Edit | 创建数据库、应用迁移  |
-
-用户令牌也可以使用，但它会跟随创建者的账号状态。无论使用哪种令牌，都必须配置 `CLOUDFLARE_ACCOUNT_ID`。
 
 ### 3. 配置 GitHub Secrets
 
@@ -147,7 +145,9 @@ Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。Gi
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID          |
 | `CUTTLE_TOKEN`          | 用于登录 Cuttle 管理功能的密钥 |
 
-`CUTTLE_TOKEN` 是进入订阅管理的唯一凭据。公网部署请使用足够长且不可预测的随机字符串，并妥善保存。缺少任意一个 secret 都会导致部署失败或被跳过。
+其中，`CUTTLE_TOKEN` 是进入订阅管理功能的唯一凭据。若部署到公网，请务必使用足够长、随机且不可预测的字符串，并妥善保存。
+
+> 三个 Secret 缺一不可。配置不完整时，相关部署步骤将失败或被跳过。
 
 ### 4. 运行部署
 
@@ -159,10 +159,12 @@ Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。Gi
 
 fork 中的 **Sync upstream** 工作流每天检查一次上游正式版本，也可以在 Actions 页面手动运行。
 
-- 仅同步 `v*` 正式版本，跳过 `v1.0.0-rc.1` 等预发布版本
-- 仅执行快进更新；如果默认分支包含自己的提交，工作流会停止并报错，不会覆盖已有改动
-- Cloudflare secrets 未配置完整时，代码仍会同步，但不会触发部署
-- GitHub 可能暂停长期无活动的公开仓库定时任务；届时需要在 Actions 页面重新启用
+- 仅同步正式版本：只处理 `v*` 正式版本，自动跳过 `v1.0.0-rc.1` 等预发布版本
+- 仅允许快进更新：如果 Fork 的默认分支包含自行提交的改动，工作流会停止并报错，不会覆盖现有内容
+- 同步与部署相互独立：即使 Cloudflare Secrets 未配置完整，上游代码仍可正常同步，但不会继续触发部署
+- 注意 GitHub 定时任务限制：长期无活动的公开仓库可能会被 GitHub 暂停 Scheduled Workflow；遇到这种情况，可进入 Actions 页面重新启用
+
+如果你对 Fork 做过自己的修改，建议在同步上游前确认提交历史，避免因为分支无法快进而导致自动同步中断。
 
 ### 6. 绑定自定义域名（可选）
 
