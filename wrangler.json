@@ -7,16 +7,16 @@
   "observability": {
     "enabled": true,
     "logs": { "head_sampling_rate": 1 },
-    "traces": { "enabled": true, "head_sampling_rate": 0.05 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
   },
   "secrets": {
-    "required": ["CUTTLE_TOKEN"],
+    "required": ["CUTTLE_TOKEN"]
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "cuttle",
-      "migrations_dir": "migrations",
-    },
-  ],
+      "migrations_dir": "migrations"
+    }
+  ]
 }

@@ -21,7 +21,7 @@ export default defineConfig({
         plugins: [
           cloudflareTest(async () => ({
             main: "./tests/integration/entry.ts",
-            wrangler: { configPath: "./wrangler.jsonc" },
+            wrangler: { configPath: "./wrangler.json" },
             miniflare: {
               bindings: {
                 CUTTLE_TOKEN: "test-admin-token",
