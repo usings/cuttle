@@ -58,6 +58,15 @@ export function ConnectionPanel() {
     void navigate({ to: ".", search: (prev) => ({ ...prev, connect: open ? true : undefined }) })
   }
 
+  // The panel lives in the URL, so one navigation both closes it and leaves the page the session
+  // just lost the right to read: `/` is the one page that works without a key, and the navigation
+  // does not even list the others while disconnected. Same exit the gate takes when the API refuses
+  // a key (`connection-gate.tsx`) — a refused session and a deliberate one leave the same way.
+  function disconnectAndLeave() {
+    disconnect()
+    void navigate({ to: "/", replace: true, viewTransition: true })
+  }
+
   async function commit() {
     const reason = await connect(draft)
     // Failures stay inline in the field; a success has nothing left to say here, so the panel goes.
@@ -74,7 +83,7 @@ export function ConnectionPanel() {
       title="管理连接"
       actions={
         committed ? (
-          <Button variant="outline" onClick={disconnect}>
+          <Button variant="outline" onClick={disconnectAndLeave}>
             <IconPlugConnectedX data-icon="inline-start" />
             断开连接
           </Button>
