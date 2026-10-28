@@ -1,180 +1,95 @@
 <p align="center">
-  <img src="assets/home.png" alt="Cuttle 界面：左侧为节点来源，中间为规则链，右侧为生成结果" width="100%">
+  <img src="assets/home.png" alt="Cuttle：节点来源、规则链和转换结果" width="100%">
 </p>
 
-<p align="center">
-  <a href="#功能概览">功能概览</a> ·
-  <a href="#使用指南">使用指南</a> ·
-  <a href="#自托管部署">自托管部署</a> ·
-  <a href="#安全边界">安全边界</a>
-</p>
+# Cuttle
 
-Cuttle 是一个运行在 Cloudflare Workers 上的代理节点转换工具。它能自动识别节点或订阅内容，按规则完成筛选、重命名、排序与去重，再生成 Mihomo、Clash、sing-box、Surge、Loon 等客户端可以直接使用的格式。
+Cuttle 将代理节点或订阅内容转换为不同客户端的节点格式，运行在你自己的 Cloudflare Workers 和 D1 上。直接粘贴文本即可转换；连接管理密钥后，可以读取远程来源并保存长期订阅。
 
-临时转换无需登录；需要持续同步上游时，也可以保存为长期订阅，让客户端通过固定地址获取最新结果。应用和数据均保留在你自己的 Cloudflare 账户中。
+[使用指南](#使用指南) · [自托管部署](#自托管部署) · [API](docs/api.md) · [本地开发与测试](docs/development.md)
 
 ## 功能概览
 
 ### 输入与协议
 
-Cuttle 无需预先指定格式，可以直接识别：
+支持节点 URI、Base64 订阅、SSD、Clash / Mihomo YAML、sing-box JSON、Xray / V2Ray JSON，以及 Surge、Loon、Quantumult X 和 Egern 节点内容。HTML 页面会被报告为无效来源。
 
-- 节点 URI 列表、Base64 订阅和 SSD
-- Clash / Mihomo YAML
-- sing-box JSON、Xray / V2Ray JSON
-- Surge、Loon、Quantumult X、Egern 节点行
-- 包含节点信息的网页内容
+sing-box JSON 以 `tls.enabled: true` 表示开启 TLS；省略 `tls` 或 `enabled` 不会自动启用 TLS。
 
-来源可以是直接粘贴的文本，也可以是一个或多个远程订阅。多个远程来源会按填写顺序读取并合并。
+远程来源可以填写多个链接，用换行或 `|` 分隔。各来源分别解析，按填写顺序合并节点，再执行一次完整规则链；多个来源可以使用不同格式。
 
-支持的协议包括：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria 2、TUIC、AnyTLS、Snell、Mieru、WireGuard、SSH、HTTP(S) 和 SOCKS5。
+可处理的协议包括 SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria 2、TUIC、AnyTLS、Snell、Mieru、WireGuard、SSH、HTTP(S) 和 SOCKS5。具体协议和传输方式能否输出，取决于目标客户端。
 
 ### 规则处理
 
-规则链中的步骤会依次执行，后一条规则处理前一条规则的结果。当前支持：
-
-- 按名称正则筛选
-- 使用正则表达式批量重命名
-- 按名称或协议排序
-- 过滤无效节点
-- 添加地区旗帜
-- 为重名节点自动编号
-- 删除重复节点
-- 批量设置 UDP、TFO 和跳过证书验证
-
-规则不是必需的。规则链为空时，Cuttle 会直接转换识别出的节点。
+规则链支持正则筛选、重命名、排序、过滤无效节点、地区旗帜、重名编号、去重，以及设置 UDP、TFO 和跳过证书验证。规则按顺序执行；不配置规则时直接转换。
 
 ### 输出客户端
 
-Cuttle 支持 14 种输出格式：
+界面提供以下 12 个输出选项：
 
-| 客户端       | `target`       | 客户端       | `target`       |
-| ------------ | -------------- | ------------ | -------------- |
-| 通用 URI     | `uri`          | Mihomo       | `mihomo`       |
-| Clash        | `clash`        | Stash        | `stash`        |
-| sing-box     | `sing-box`     | Xray         | `xray`         |
-| V2Ray        | `v2ray`        | Surge        | `surge`        |
-| Surge Mac    | `surge-mac`    | Surfboard    | `surfboard`    |
-| Egern        | `egern`        | Loon         | `loon`         |
-| Quantumult X | `quantumult-x` | Shadowrocket | `shadowrocket` |
+| 客户端        | `target`       | 输出内容                                     |
+| ------------- | -------------- | -------------------------------------------- |
+| 通用 URI      | `uri`          | 未编码的节点 URI 列表                        |
+| Mihomo        | `mihomo`       | YAML `proxies`                               |
+| Clash Classic | `clash`        | YAML `proxies`                               |
+| Stash         | `stash`        | YAML `proxies`                               |
+| sing-box      | `sing-box`     | JSON `outbounds`，WireGuard 使用 `endpoints` |
+| Xray          | `xray`         | JSON `outbounds`                             |
+| V2Ray         | `v2ray`        | 整体 Base64 编码的 URI 列表                  |
+| Surge         | `surge`        | 节点行                                       |
+| Surfboard     | `surfboard`    | 节点行                                       |
+| Egern         | `egern`        | YAML `proxies`                               |
+| Loon          | `loon`         | 节点行                                       |
+| Quantumult X  | `quantumult-x` | 节点行                                       |
 
-不同客户端支持的协议、传输方式和字段并不完全相同。Cuttle 只输出目标客户端能够准确表示的节点；无法兼容的节点会被跳过，并在诊断信息中说明原因，不会为了保留数量而生成失真的配置。
+生成内容用于导入节点，不包含完整客户端的路由、规则集或运行设置。无法在目标格式中表示的节点会被跳过，原因显示在诊断信息中。
 
-### 长期订阅
-
-来源、规则链和默认输出格式可以保存为长期订阅：
-
-- 文本来源会持续使用保存时的内容
-- 远程来源会在每次访问时重新读取上游，再应用规则并生成结果
-- 订阅支持编辑、启用、停用、轮换 token 和删除
-- 普通编辑不会改变订阅地址，只有轮换 token 会立即废止旧地址
-- 停用后的订阅地址返回 `410`，但保存的配置仍会保留
+TLS 和传输方式按协议检查。例如，TLS SOCKS 不会转换为普通 SOCKS URI；不能表达该连接的目标会跳过节点并报告原因。转换只处理配置，不检查节点是否在线或能否连接。
 
 ## 使用指南
 
 ### 完成一次转换
 
-1. 在“源”中粘贴订阅内容，或连接管理密钥后填写远程订阅地址。
-2. 按需添加并排列规则。
-3. 在“输出”中选择目标客户端，然后点击“生成”。
-4. 查看、复制或下载结果，并通过“节点”和诊断信息检查实际输出内容。
+1. 在“节点源”中粘贴内容。读取远程订阅时，先通过页面顶部的连接按钮输入管理密钥，再选择“远程”。
+2. 按需设置规则链。
+3. 选择输出客户端并点击“生成”。
+4. 在“正文”和“节点”中检查结果。若出现诊断提示，展开查看跳过的内容，再复制或下载正文。
 
-修改来源、规则或目标客户端后，已有结果会被标记为过期。再次点击“生成”即可刷新。
+修改来源、规则或客户端后，已有结果会标记为待重新生成。
 
-> 直接粘贴文本无需连接管理密钥。读取远程来源或管理长期订阅时，需要先使用部署时设置的管理密钥连接。
+### 保存和管理长期订阅
 
-### 保存为长期订阅
-
-完成一次生成后，可以将当前配置保存为订阅：
-
-1. 点击“存为订阅”。
-2. 填写一个便于识别的名称。
-3. 确认来源、规则链、默认客户端和启用状态。
-4. 保存后立即复制生成的订阅地址。
+连接管理密钥后，生成结果旁会提供“存为订阅”；也可以进入“订阅管理”直接新建。填写名称、来源、默认客户端和规则后保存，并立即复制返回的地址：
 
 ```text
-https://cuttle.your-worker.workers.dev/subscribe/<token>
+https://cuttle.{your-worker}.workers.dev/subscribe/<token>
 ```
 
-完整 token 只会在创建和轮换时显示一次。订阅地址本身就是访问凭据，请妥善保管。
+`<token>` 是系统生成的凭据，只在创建或轮换后返回。普通编辑不改变地址；轮换会更换凭据。管理界面会拒绝过期版本的保存，遇到冲突时重新打开编辑器或刷新页面后再编辑。
 
-### 用同一地址切换输出格式
+文本订阅使用保存的内容；远程订阅按访问触发刷新，并复用短期缓存。停用、删除和轮换在源站生效，但不能收回客户端已下载或 HTTP 缓存中的内容。刷新与缓存的具体行为见 [API 缓存说明](docs/api.md#刷新与缓存)。
 
-在订阅地址后添加 `?target=`，可以临时指定输出格式，不会改变订阅保存的默认客户端：
+### 临时切换输出格式
+
+在订阅地址上附加 `?target=`，即可覆盖本次输出格式：
 
 ```text
-https://cuttle.your-worker.workers.dev/subscribe/<token>?target=sing-box
+https://cuttle.{your-worker}.workers.dev/subscribe/<token>?target=sing-box
 ```
 
-`target` 的可用值见上方[输出客户端](#输出客户端)表格。移除查询参数后，地址会恢复为订阅的默认格式。
+可用值见[输出客户端](#输出客户端)。移除参数后恢复订阅的默认目标。
 
 ## 自托管部署
 
-推荐使用 **Fork + GitHub Actions** 的方式进行部署。整个过程无需在本机安装开发环境；GitHub Actions 会自动完成 D1 数据库创建、数据库迁移、密钥上传以及 Worker 发布。
+按照[部署指南](docs/deployment.md)配置 Cloudflare 凭据和管理密钥，通过仓库内的 GitHub Actions 部署。已有部署升级时，须先应用 D1 迁移，再发布 Worker；Actions 已按这一顺序执行。
 
-### 1. Fork 仓库并启用 Actions
-
-Fork 本仓库，然后打开 fork 的 **Actions** 页面并启用工作流。（GitHub 默认不会为新建的 fork 启用 Actions，因此需要手动开启）
-
-### 2. 准备 Cloudflare 凭据
-
-部署需要 Cloudflare **Account ID** 和 **API Token**。
-
-**Account ID**
-
-在 Cloudflare Dashboard 中按 <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>K</kbd>，搜索 `Copy account ID`；也可以前往 **Workers & Pages → Account details** 复制。
-
-**API Token**
-
-创建[账户令牌（account-owned token）](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/#create-an-account-owned-token)。
-
-可以基于 **Edit Cloudflare Workers** 模板创建，并确保至少拥有以下权限：
-
-| 权限            | 级别 | 用途                  |
-| --------------- | ---- | --------------------- |
-| Workers Scripts | Edit | 发布 Worker、上传密钥 |
-| D1              | Edit | 创建数据库、应用迁移  |
-
-### 3. 配置 GitHub Secrets
-
-在 fork 的 **Settings → Secrets and variables → Actions** 中添加三个 Repository secret：
-
-| Secret                  | 说明                           |
-| ----------------------- | ------------------------------ |
-| `CLOUDFLARE_API_TOKEN`  | Cloudflare API Token           |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID          |
-| `CUTTLE_TOKEN`          | 用于登录 Cuttle 管理功能的密钥 |
-
-其中，`CUTTLE_TOKEN` 是进入订阅管理功能的唯一凭据。若部署到公网，请务必使用足够长、随机且不可预测的字符串，并妥善保存。
-
-> 三个 Secret 缺一不可。配置不完整时，相关部署步骤将失败或被跳过。
-
-### 4. 运行部署
-
-打开 **Actions → Deploy → Run workflow**。部署成功后，工作流会给出一个 `cuttle.*.workers.dev` 地址。
-
-之后向仓库推送 `v*` 标签也会自动部署；运行 `pnpm release` 可以协助更新版本并创建标签。
-
-### 5. 跟随上游更新
-
-fork 中的 **Sync upstream** 工作流每天检查一次上游正式版本，也可以在 Actions 页面手动运行。
-
-- 仅同步正式版本：只处理 `v*` 正式版本，自动跳过 `v1.0.0-rc.1` 等预发布版本
-- 仅允许快进更新：如果 Fork 的默认分支包含自行提交的改动，工作流会停止并报错，不会覆盖现有内容
-- 同步与部署相互独立：即使 Cloudflare Secrets 未配置完整，上游代码仍可正常同步，但不会继续触发部署
-- 注意 GitHub 定时任务限制：长期无活动的公开仓库可能会被 GitHub 暂停 Scheduled Workflow；遇到这种情况，可进入 Actions 页面重新启用
-
-如果你对 Fork 做过自己的修改，建议在同步上游前确认提交历史，避免因为分支无法快进而导致自动同步中断。
-
-### 6. 绑定自定义域名（可选）
-
-默认的 `cuttle.*.workers.dev` 地址可以直接使用。若要绑定自定义域名，请在 Cloudflare Dashboard 中打开该 Worker，并在域名与路由设置中添加 Custom Domain。
-
-更换域名不会影响应用功能，但已经添加到客户端的订阅地址不会自动更新。
+需要本地运行、验证修改或更新输出快照时，参见[本地开发与测试](docs/development.md)。程序调用参见 [API](docs/api.md)。
 
 ## 安全边界
 
-- 订阅地址本身就是访问凭据；完整 token 只会在创建和轮换时显示一次
-- 远程来源只允许 HTTP(S) 公网地址，并受链接数量、响应体积、重定向次数和请求超时限制
-- 订阅来源和生成结果以明文保存在 D1 中；数据库导出文件同样包含完整订阅内容，应按敏感数据处理
-- Cuttle 只提取、处理和转换代理节点，不生成规则集或完整客户端配置，也不会执行用户脚本
+- 管理 API 和远程读取要求管理密钥；本地文本转换无需密钥。
+- 订阅地址持有者可读取对应输出，应像密码一样保管地址。
+- 远程读取只接受 HTTP(S)，检查地址和 DNS 结果，并限制重定向、链接数量、体积和请求时间。
+- 来源和生成结果以明文存放在 D1；备份与导出也包含这些内容。
+- Cuttle 不执行节点中的脚本，也不验证代理服务器能否实际连接。输出快照通过不等于真实客户端导入或连通性验证。
