@@ -1,7 +1,14 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["oxc", "eslint", "import", "typescript", "react", "unicorn", "jsdoc", "vitest"],
-  "ignorePatterns": ["src/routeTree.gen.ts", "wrangler.d.ts", "dist/**", "test-results/**"],
+  "ignorePatterns": [
+    ".agents/**",
+    ".claude/**",
+    "src/routeTree.gen.ts",
+    "wrangler.d.ts",
+    "dist/**",
+    "test-results/**"
+  ],
   "options": {
     "maxWarnings": 0,
     "reportUnusedDisableDirectives": "error"
