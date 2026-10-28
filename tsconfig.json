@@ -9,7 +9,7 @@
       "@/*": ["./src/*"]
     },
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["node", "vite/client", "@cloudflare/vitest-pool-workers/types", "./wrangler.d.ts"],
+    "types": ["node", "vite/client", "@cloudflare/vitest-plugin/types", "./wrangler.d.ts"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
