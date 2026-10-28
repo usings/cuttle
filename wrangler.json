@@ -6,8 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
-    "logs": { "head_sampling_rate": 1 },
-    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+    "logs": { "head_sampling_rate": 1 }
   },
   "secrets": {
     "required": ["CUTTLE_TOKEN"]
