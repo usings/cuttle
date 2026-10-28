@@ -66,7 +66,9 @@ function applyStreamSettings(node: DraftNode, value: unknown) {
   }
 
   const security = asString(stream.security)
-  if (security === "tls") {
+  if (security === "none") {
+    node.tls = false
+  } else if (security === "tls") {
     const tls = asRecord(stream.tlsSettings)
     node.tls = true
     node.sni = asString(tls?.serverName)

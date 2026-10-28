@@ -5,8 +5,8 @@ import { join } from "node:path"
  * The inputs every output fixture is generated from, and the one place they are read.
  *
  * Grouped by the protocol each example carries, because that is the axis the corpus owes coverage on: a
- * protocol a client declares with an empty list here has no fixture showing what it writes and no round
- * trip proving it survives. Within a group the examples are the ways that protocol can arrive — its own
+ * protocol a client declares with an empty list here has no fixture showing what it writes.
+ * Within a group the examples are the ways that protocol can arrive — its own
  * URI, and each config format that spells it differently.
  *
  * Exhaustive rather than large: one example per group unless the group genuinely differs by transport,

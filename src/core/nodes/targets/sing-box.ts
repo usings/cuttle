@@ -12,11 +12,28 @@ import {
 } from "../values"
 import { wireGuardAddresses } from "../wireguard"
 import { defineTarget } from "./define"
+import type { ProtocolCapability } from "./types"
 
 const TYPE_FROM_CANONICAL: Record<string, string> = {
   ss: "shadowsocks",
   socks5: "socks",
 }
+
+const V2RAY_TRANSPORTS = ["tcp", "ws", "grpc", "http", "h2", "httpupgrade", "quic"]
+const PROTOCOL_OPTIONS = {
+  ss: { transports: ["tcp"], tls: "unsupported" },
+  socks5: { transports: ["tcp"], tls: "unsupported" },
+  http: { transports: ["tcp"], tls: "supported" },
+  vmess: { transports: V2RAY_TRANSPORTS, tls: "supported" },
+  vless: { transports: V2RAY_TRANSPORTS, tls: "supported" },
+  trojan: { transports: V2RAY_TRANSPORTS, tls: "supported" },
+  hysteria: { transports: ["tcp"], tls: "required" },
+  hysteria2: { transports: ["tcp"], tls: "required" },
+  tuic: { transports: ["tcp"], tls: "required" },
+  anytls: { transports: ["tcp"], tls: "required" },
+  wireguard: { transports: ["tcp"], tls: "unsupported" },
+  ssh: { transports: ["tcp"], tls: "unsupported" },
+} satisfies Record<string, ProtocolCapability>
 
 function renderPluginOptions(value: unknown) {
   const options = asRecord(value)
@@ -210,10 +227,11 @@ function renderOutbound(node: CanonicalNode) {
   // WireGuard has none either but never arrives, because `renderNode` sends it to
   // `renderWireGuardEndpoint`. Adding a protocol here means checking its own field list, not this one.
   if (node.udp === false && !["http", "ssh", "anytls"].includes(node.type)) base.network = "tcp"
-  if (node.type !== "wireguard") {
+  const options = PROTOCOL_OPTIONS[node.type as keyof typeof PROTOCOL_OPTIONS]
+  if (options.tls !== "unsupported") {
     base.tls = renderSingBoxTls(node)
-    base.transport = renderTransport(node)
   }
+  if (["vmess", "vless", "trojan"].includes(node.type)) base.transport = renderTransport(node)
   return compactRecord(base)
 }
 
@@ -274,21 +292,8 @@ function renderWireGuardEndpoint(node: CanonicalNode) {
 export const singBoxTarget = defineTarget({
   id: "sing-box",
   label: "sing-box",
-  protocols: [
-    "ss",
-    "socks5",
-    "http",
-    "vmess",
-    "vless",
-    "trojan",
-    "hysteria",
-    "hysteria2",
-    "tuic",
-    "anytls",
-    "wireguard",
-    "ssh",
-  ],
-  transports: ["tcp", "ws", "grpc", "http", "h2", "httpupgrade", "quic"],
+  protocols: Object.keys(PROTOCOL_OPTIONS),
+  protocolOptions: PROTOCOL_OPTIONS,
   // A duplicate tag makes the configuration invalid, so the proxy names are numbered.
   uniqueNames: true,
   // Numbering the names alone would hand out this tag twice; see `TargetSpec.derivedNames`. Same

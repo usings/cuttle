@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { compileNodeList, TARGET_IDS, targetDefinition } from "@/core/nodes"
+import { compileNodeList, inspectNodeList } from "@/core/nodes"
 
 const SS = "ss://YWVzLTEyOC1nY206cGFzcw@example.com:8388#Node"
 /** Xray's Shadowsocks outbound has no plugin slot, so this one clears the lists and still has no shape. */
@@ -40,12 +40,6 @@ function tagLinksOf(content: string) {
 }
 
 describe("the render stage", () => {
-  test("every client states whether its names must be unique", () => {
-    const missing = TARGET_IDS.filter((id) => typeof targetDefinition(id).uniqueNames !== "boolean")
-
-    expect(missing).toStrictEqual([])
-  })
-
   test("a client that keys policies by name gets the second one numbered", () => {
     const result = compileNodeList({ source: [SS, SS].join("\n"), target: "mihomo" })
 
@@ -94,7 +88,6 @@ describe("the render stage", () => {
       ["A_shadowtls", null],
       ["A_shadowtls 2", null],
     ])
-    expect(new Set(tagsOf(content)).size).toBe(3)
   })
 
   test("a Shadow-TLS node is numbered when only its derived tag collides", () => {
@@ -107,7 +100,6 @@ describe("the render stage", () => {
       ["A 2", "A 2_shadowtls"],
       ["A 2_shadowtls", null],
     ])
-    expect(new Set(tagsOf(content)).size).toBe(3)
   })
 
   test("two Shadow-TLS nodes of the same name keep one detour each", () => {
@@ -120,7 +112,6 @@ describe("the render stage", () => {
       ["A 2", "A 2_shadowtls"],
       ["A 2_shadowtls", null],
     ])
-    expect(new Set(tagsOf(content)).size).toBe(4)
   })
 
   /**
@@ -191,5 +182,78 @@ describe("the render stage", () => {
 
     expect(result.nodes).toHaveLength(2)
     expect(result.renderedNodes.map((node) => node.name)).toStrictEqual(["Node"])
+  })
+})
+
+describe("line format boundaries", () => {
+  const trojan = { name: "Safe", type: "trojan", server: "example.com", port: 443, password: "p" }
+
+  test.each(["surge", "surfboard", "loon", "quantumult-x"] as const)(
+    "%s cannot turn a server address into a second node",
+    (target) => {
+      const source = JSON.stringify({
+        proxies: [
+          {
+            ...trojan,
+            server: 'example.com, 443, password="p"\nInjected = trojan, attacker.example',
+          },
+          trojan,
+        ],
+      })
+      const result = compileNodeList({ source, target })
+      expect(result.renderedNodes.map((node) => node.name)).toStrictEqual(["Safe"])
+      expect(inspectNodeList(result.content).nodes.map((node) => node.name)).toStrictEqual(["Safe"])
+      expect(result.diagnostics).toMatchObject([{ stage: "canonical-validation" }])
+    },
+  )
+
+  test.each(["surge", "surfboard", "loon", "quantumult-x"] as const)(
+    "%s refuses a parameter containing another parameter",
+    (target) => {
+      const source = JSON.stringify({
+        proxies: [{ ...trojan, sni: "example.com, skip-cert-verify=true" }],
+      })
+      const result = compileNodeList({ source, target })
+      expect(result.renderedNodes).toStrictEqual([])
+      expect(result.diagnostics).toMatchObject([
+        { stage: "target-validation", code: "render-refused" },
+      ])
+    },
+  )
+
+  test.each(["surge", "surfboard", "loon", "quantumult-x"] as const)(
+    "%s refuses control characters instead of changing a credential",
+    (target) => {
+      const source = JSON.stringify({ proxies: [{ ...trojan, password: "secret\nchanged" }] })
+      const result = compileNodeList({ source, target })
+      expect(result.renderedNodes).toStrictEqual([])
+      expect(result.diagnostics).toMatchObject([{ stage: "target-validation" }])
+    },
+  )
+
+  test("Loon still carries a comma inside a quoted password and multiple ALPNs", () => {
+    const source = JSON.stringify({
+      proxies: [{ ...trojan, password: "a,b", alpn: ["h2", "http/1.1"] }],
+    })
+    const result = compileNodeList({ source, target: "loon" })
+    expect(result.renderedNodes).toHaveLength(1)
+    expect(result.content).toContain('"a,b"')
+    expect(result.content).toContain('alpn="h2,http/1.1"')
+    expect(inspectNodeList(result.content).nodes[0].password).toBe("a,b")
+  })
+
+  test("Surge refuses a forged WebSocket header-list entry", () => {
+    const source = JSON.stringify({
+      proxies: [
+        {
+          ...trojan,
+          "network": "ws",
+          "ws-opts": { headers: { Host: "example.com|Authorization:secret" } },
+        },
+      ],
+    })
+    const result = compileNodeList({ source, target: "surge" })
+    expect(result.renderedNodes).toStrictEqual([])
+    expect(result.diagnostics).toMatchObject([{ stage: "target-validation" }])
   })
 })

@@ -78,10 +78,10 @@ SSR Node = shadowsocksr, ssr.example.com, 8388, aes-256-cfb, "password", protoco
 
 ━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · trojan:grpc-tls
-! Trojan gRPC (trojan/grpc) cannot be carried by loon; skipped.
+! Trojan gRPC (trojan/grpc) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · trojan:httpupgrade
-! Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped.
+! Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · trojan:no-udp
 Trojan NoUDP = trojan, example.com, 443, "password", transport=tcp, over-tls=true, tls-name=example.com, skip-cert-verify=true
@@ -93,22 +93,22 @@ Trojan = trojan, example.com, 443, "password", transport=tcp, over-tls=true, tls
 Trojan WS = trojan, example.com, 443, "password", transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
 
 · trojan:xray-json-httpupgrade
-! Xray Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped.
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 ━━ tuic — not carried ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ━━ vless 4/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · vless:grpc-multi
-! VLESS gRPC Multi (vless/grpc) cannot be carried by loon; skipped.
+! VLESS gRPC Multi (vless/grpc) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · vless:reality-grpc
-! VLESS Reality (vless/grpc) cannot be carried by loon; skipped.
+! VLESS Reality (vless/grpc) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · vless:reality-tcp
 VLESS Reality TCP = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=tcp, over-tls=true, sni=www.example.com, skip-cert-verify=false, tls-profile=chrome, public-key="public-key", short-id=12ab, udp=true
 
 · vless:sing-box-json-reality-grpc
-! Reality gRPC (vless/grpc) cannot be carried by loon; skipped.
+! Reality gRPC (vless/grpc) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · vless:vision-tcp
 VLESS Vision = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=tcp, flow=xtls-rprx-vision, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
@@ -120,14 +120,14 @@ VLESS ALPN = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", tr
 VLESS WS = vless, example.com, 443, "01890d4e-7d8d-7d0c-98fb-123456789abc", transport=ws, path=/ws, host=cdn.example.com, over-tls=true, tls-name=example.com, skip-cert-verify=false, udp=true
 
 · vless:xhttp-reality
-! VLESS XHTTP (vless/xhttp) cannot be carried by loon; skipped.
+! VLESS XHTTP (vless/xhttp) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 ━━ vmess 5/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · vmess:grpc-tls
-! VMess gRPC (vmess/grpc) cannot be carried by loon; skipped.
+! VMess gRPC (vmess/grpc) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · vmess:h2-tls
-! VMess H2 (vmess/h2) cannot be carried by loon; skipped.
+! VMess H2 (vmess/h2) cannot be carried by loon; skipped. The transport cannot be represented for this protocol.
 
 · vmess:http-tcp
 VMess HTTP = vmess, example.com, 80, auto, "01890d4e-7d8d-7d0c-98fb-123456789abc", alterId=0, transport=http, path=/http, host=cdn.example.com, udp=true

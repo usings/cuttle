@@ -6,12 +6,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray"
     ],
@@ -30,12 +28,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray",
       "xray"
@@ -49,7 +45,7 @@
   },
   {
     "protocol": "hysteria",
-    "scopes": ["mihomo", "shadowrocket", "sing-box", "stash", "uri", "v2ray"],
+    "scopes": ["mihomo", "sing-box", "stash", "uri", "v2ray"],
     "examples": [
       {
         "name": "hysteria:v1",
@@ -63,12 +59,10 @@
       "egern",
       "loon",
       "mihomo",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray"
     ],
@@ -91,7 +85,7 @@
   },
   {
     "protocol": "snell",
-    "scopes": ["egern", "mihomo", "surfboard", "surge", "surge-mac"],
+    "scopes": ["egern", "mihomo", "surfboard", "surge"],
     "examples": [
       {
         "name": "snell:v4",
@@ -107,12 +101,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray",
       "xray"
@@ -132,12 +124,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray",
       "xray"
@@ -207,7 +197,7 @@
   },
   {
     "protocol": "ssh",
-    "scopes": ["egern", "mihomo", "sing-box", "stash", "surge", "surge-mac"],
+    "scopes": ["egern", "mihomo", "sing-box", "stash", "surge"],
     "examples": [
       {
         "name": "ssh:mihomo-yaml",
@@ -217,7 +207,7 @@
   },
   {
     "protocol": "ssr",
-    "scopes": ["clash", "loon", "mihomo", "quantumult-x", "shadowrocket", "stash", "uri", "v2ray"],
+    "scopes": ["clash", "loon", "mihomo", "quantumult-x", "stash", "uri", "v2ray"],
     "examples": [
       {
         "name": "ssr:uri",
@@ -233,12 +223,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray",
       "xray"
@@ -272,18 +260,7 @@
   },
   {
     "protocol": "tuic",
-    "scopes": [
-      "egern",
-      "mihomo",
-      "shadowrocket",
-      "sing-box",
-      "stash",
-      "surfboard",
-      "surge",
-      "surge-mac",
-      "uri",
-      "v2ray"
-    ],
+    "scopes": ["egern", "mihomo", "sing-box", "stash", "surfboard", "surge", "uri", "v2ray"],
     "examples": [
       {
         "name": "tuic:v4",
@@ -306,7 +283,6 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "uri",
@@ -356,12 +332,10 @@
       "loon",
       "mihomo",
       "quantumult-x",
-      "shadowrocket",
       "sing-box",
       "stash",
       "surfboard",
       "surge",
-      "surge-mac",
       "uri",
       "v2ray",
       "xray"
@@ -399,7 +373,7 @@
   },
   {
     "protocol": "wireguard",
-    "scopes": ["loon", "mihomo", "shadowrocket", "sing-box", "stash", "uri", "v2ray"],
+    "scopes": ["loon", "mihomo", "sing-box", "stash", "uri", "v2ray"],
     "examples": [
       {
         "name": "wireguard:clash-yaml",

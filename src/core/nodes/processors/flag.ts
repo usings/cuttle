@@ -17,7 +17,7 @@ const FLAG_RULES: Array<[RegExp, string]> = [
 
 function withoutFlag(value: string) {
   return value
-    .replace(FLAG_EXPRESSION, "")
+    .replaceAll(FLAG_EXPRESSION, "")
     .replaceAll(/\s{2,}/g, " ")
     .trim()
 }

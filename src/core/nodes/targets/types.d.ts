@@ -1,5 +1,19 @@
-import type { TargetCapability } from "../pipeline/capability"
 import type { CanonicalNode } from "../types"
+
+/** A protocol's representable connection properties in one output format. */
+export interface ProtocolCapability {
+  transports: readonly string[] | "all"
+  tls: "supported" | "unsupported" | "required"
+  reality?: boolean
+}
+
+export interface TargetCapability {
+  protocols: readonly string[] | "all"
+  transports?: readonly string[] | "all"
+  protocolOptions?: Readonly<Record<string, ProtocolCapability>>
+  /** Cipher, protocol version or plugin restrictions not covered by the declared properties. */
+  accepts?: (node: CanonicalNode) => boolean
+}
 
 /**
  * One piece of a client's document: a line for the text formats, an object for the structured ones.
@@ -73,6 +87,8 @@ export interface TargetSpec<Id extends string, Unit extends RenderUnit> extends 
   /**
    * One node in, the units it is written as out. `null` refuses it: a credential holding the line
    * separator, a transport with no syntax, a protocol version this client never implemented.
+   * Shared encoders may throw TargetValidationError to report a specific representability failure.
+   * The pipeline skips that node and reports the reason; unexpected errors propagate.
    * An array is for a node that expands — sing-box writes a Shadow-TLS proxy as two outbounds.
    */
   renderNode(node: CanonicalNode): Unit | Unit[] | null

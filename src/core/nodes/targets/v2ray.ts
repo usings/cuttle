@@ -1,6 +1,6 @@
 import { encodeBase64 } from "../base64"
 import { defineTarget } from "./define"
-import { renderUriNode, URI_PROTOCOLS } from "./shared/uri-node"
+import { renderUriNode, URI_PROTOCOL_OPTIONS, URI_PROTOCOLS } from "./shared/uri-node"
 
 /**
  * V2Ray's subscription format is the URI list again, Base64 encoded as a whole. It is deliberately
@@ -10,7 +10,7 @@ export const v2rayTarget = defineTarget({
   id: "v2ray",
   label: "V2Ray",
   protocols: URI_PROTOCOLS,
-  transports: "all",
+  protocolOptions: URI_PROTOCOL_OPTIONS,
   notes: "Writes a Base64-encoded list of protocol URIs, not a V2Ray JSON configuration.",
   uniqueNames: false,
   contentType: "text/plain; charset=utf-8",

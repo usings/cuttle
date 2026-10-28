@@ -1,28 +1,49 @@
+import { ValidationError } from "@/core/errors"
 import { processNodes } from "../processors"
 import { targetDefinition } from "../targets"
 import type { CompileRequest, CompileResult, InspectResult } from "../types"
 import { validateCanonical } from "./canonical-validation"
 import { canonicalize } from "./canonicalize"
-import { prepareInput } from "./input"
+import { MAX_SOURCE_SIZE, prepareInput } from "./input"
 import { parseSource } from "./parse"
 import { validateDrafts } from "./parse-validation"
 import { renderDocument } from "./render"
 
-export { MAX_SOURCE_SIZE } from "./input"
+export { MAX_SOURCE_SIZE }
 
 /**
- * Reads source text into the canonical node model, whatever format it arrived in, and reports
- * which format that turned out to be. Nothing here fetches, stores or renders: it is the same
+ * Parses each source independently, merges its canonical nodes in source order, and reports
+ * their format (mixed when formats differ). Diagnostics retain source-local line numbers.
+ * Nothing here fetches, stores or renders: it is the same
  * function in a browser and in a Worker.
  */
-export function inspectNodeList(source: string): InspectResult {
-  const prepared = prepareInput(source)
-  const parsed = parseSource(prepared)
-  const validated = validateDrafts(parsed.drafts)
+export function inspectNodeList(source: string | string[]): InspectResult {
+  const sources = Array.isArray(source) ? source : [source]
+  const encoder = new TextEncoder()
+  let size = 0
+  const results = sources.map((text) => {
+    if (typeof text !== "string") throw new ValidationError("source must be a string")
+    size += encoder.encode(text).byteLength
+    if (size > MAX_SOURCE_SIZE) {
+      throw new ValidationError("Combined subscription content must not exceed 2 MiB")
+    }
+    const parsed = parseSource(prepareInput(text))
+    const validated = validateDrafts(parsed.drafts)
+    return {
+      nodes: validated.drafts.map((entry) => canonicalize(entry.value)),
+      detectedFormat: parsed.format,
+      diagnostics: [...parsed.diagnostics, ...validated.diagnostics],
+    }
+  })
+  const formats = new Set(results.map((result) => result.detectedFormat))
   return {
-    nodes: validated.drafts.map((entry) => canonicalize(entry.value)),
-    detectedFormat: parsed.format,
-    diagnostics: [...parsed.diagnostics, ...validated.diagnostics],
+    nodes: results.flatMap((result) => result.nodes),
+    detectedFormat: formats.size === 1 ? results[0].detectedFormat : "mixed",
+    diagnostics: results.flatMap((result, sourceIndex) =>
+      result.diagnostics.map((diagnostic) =>
+        sources.length > 1 ? { ...diagnostic, sourceIndex } : diagnostic,
+      ),
+    ),
   }
 }
 

@@ -19,6 +19,17 @@ const TYPE_TO_CANONICAL: Record<string, string> = {
   socks: "socks5",
 }
 
+const TLS_OUTBOUND_TYPES = new Set([
+  "http",
+  "vmess",
+  "vless",
+  "trojan",
+  "hysteria",
+  "hysteria2",
+  "tuic",
+  "anytls",
+])
+
 /**
  * A Shadowsocks outbound's plugin options, in either shape they arrive in: the `;`-delimited string
  * sing-box writes, and the record `mergeShadowTls` folds a Shadow-TLS wrapper back into. Reading only
@@ -76,16 +87,14 @@ function parseTransport(node: DraftNode, value: unknown) {
 
 function canonicalTls(node: DraftNode, value: unknown) {
   const tls = asRecord(value)
-  if (!tls) return
-  // `enabled: false` is a statement, and canonicalize only honors statements it can see: its rule for
-  // the protocols that imply TLS is `node.tls ?? true`, so leaving `tls` unset hands a
-  // trojan/hysteria2/tuic/anytls outbound back with TLS on against a server the source said speaks
-  // none. The same statement as a trojan URI's `security=none`, and it has to mean the same thing.
-  if (tls.enabled === false) {
-    node.tls = false
+  if (!tls) {
+    // Missing TLS is disabled in this format, including for Trojan. State the answer so the
+    // canonical model's protocol defaults cannot enable something the source did not configure.
+    if (typeof node.type === "string" && TLS_OUTBOUND_TYPES.has(node.type)) node.tls = false
     return
   }
-  node.tls = true
+  node.tls = tls.enabled === true
+  if (!node.tls) return
   const serverName = asString(tls.server_name)
   const insecure = asBoolean(tls.insecure)
   const alpn = stringArray(tls.alpn)

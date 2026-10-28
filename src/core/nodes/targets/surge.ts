@@ -1,4 +1,3 @@
-import type { TargetCapability } from "../pipeline/capability"
 import { pluginBeyondObfs, shadowTls } from "../plugins"
 import { tuicIsV5 } from "../protocols"
 import type { CanonicalNode } from "../types"
@@ -161,8 +160,9 @@ function surgeNode(node: CanonicalNode, target: "surfboard" | "surge" = "surge")
 
 export { surgeNode }
 
-/** Surge for iOS and Surge for macOS read the same node line and refuse the same nodes. */
-export const SURGE_CAPABILITY: TargetCapability = {
+export const surgeTarget = defineTarget({
+  id: "surge",
+  label: "Surge",
   protocols: [
     "ss",
     "vmess",
@@ -177,12 +177,6 @@ export const SURGE_CAPABILITY: TargetCapability = {
   ],
   transports: ["tcp", "ws"],
   accepts: (node) => node.type !== "ss" || SURGE_CIPHERS.has(cipherOf(node)),
-}
-
-export const surgeTarget = defineTarget({
-  id: "surge",
-  label: "Surge",
-  ...SURGE_CAPABILITY,
   uniqueNames: true,
   renderedName: policyName,
   contentType: "text/plain; charset=utf-8",

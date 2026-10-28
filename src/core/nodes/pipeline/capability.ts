@@ -1,29 +1,33 @@
+import type { TargetCapability } from "../targets/types"
 import type { CanonicalNode } from "../types"
-
-/**
- * What a client can carry at all, before any question of how it is spelled. The lists are the coarse
- * answer; `accepts` is for what they cannot say — a cipher, a protocol version, a plugin.
- */
-export interface TargetCapability {
-  protocols: readonly string[] | "all"
-  transports?: readonly string[] | "all"
-  accepts?: (node: CanonicalNode) => boolean
-}
 
 /**
  * Whether a client can carry this node at all; the renderer decides how to spell what is left.
  *
- * The only reading of the three fields above: the `"all"` sentinel, a missing `transports` list and
- * the `tcp` default live here rather than at the call sites, so no renderer can check the protocol
- * list and forget what `accepts` had to say.
+ * Per-protocol options override the target-wide transport default. TLS requirements describe what
+ * the output can express, not whether a remote server works. A refusal must precede serialization
+ * so an unsupported security property cannot be silently discarded.
  */
-export function acceptsNode(capability: TargetCapability, node: CanonicalNode) {
-  if (capability.protocols !== "all" && !capability.protocols.includes(node.type)) return false
-  if (capability.accepts && !capability.accepts(node)) return false
+export function capabilityIssue(capability: TargetCapability, node: CanonicalNode): string | null {
+  if (capability.protocols !== "all" && !capability.protocols.includes(node.type)) {
+    return "The protocol is unsupported."
+  }
+  if (capability.accepts && !capability.accepts(node))
+    return "The protocol options are unsupported."
+  const options = capability.protocolOptions?.[node.type]
   const network = String(node.network || "tcp")
-  return (
-    capability.transports === "all" ||
-    !capability.transports ||
-    capability.transports.includes(network)
-  )
+  const transports = options?.transports ?? capability.transports
+  if (transports && transports !== "all" && !transports.includes(network)) {
+    return "The transport cannot be represented for this protocol."
+  }
+  if (options?.tls === "unsupported" && (node.tls || node["reality-opts"])) {
+    return "TLS cannot be represented for this protocol."
+  }
+  if (options?.tls === "required" && node.tls === false) {
+    return "This protocol requires TLS in the output format."
+  }
+  if (options?.reality === false && node["reality-opts"]) {
+    return "Reality cannot be represented for this protocol."
+  }
+  return null
 }

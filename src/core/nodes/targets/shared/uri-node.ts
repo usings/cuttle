@@ -4,30 +4,33 @@ import { pathWithEarlyData } from "../../transport"
 import type { CanonicalNode } from "../../types"
 import { alpnList, asRecord } from "../../values"
 import { wireGuardAddresses } from "../../wireguard"
+import type { ProtocolCapability } from "../types"
 import { endpoint } from "./node-line"
 
 /**
  * The protocols `renderUriNode` has a spelling for, and what every target that serves a URI list
- * declares. One list rather than three: it is a claim about the switch below, so a protocol added
+ * declares. One list shared by both targets: it is a claim about the switch below, so a protocol added
  * there and forgotten here is one no URI target will carry.
  *
  * None of those targets sets `uniqueNames`: a URI carries its own name in its fragment and clients
  * read the list as given, so nothing is renumbered.
  */
-export const URI_PROTOCOLS = [
-  "ss",
-  "ssr",
-  "vmess",
-  "vless",
-  "trojan",
-  "hysteria",
-  "hysteria2",
-  "tuic",
-  "wireguard",
-  "anytls",
-  "http",
-  "socks5",
-] as const
+export const URI_PROTOCOL_OPTIONS = {
+  ss: { transports: ["tcp"], tls: "unsupported" },
+  ssr: { transports: ["tcp"], tls: "unsupported" },
+  vmess: { transports: "all", tls: "supported", reality: false },
+  vless: { transports: "all", tls: "supported" },
+  trojan: { transports: "all", tls: "supported" },
+  hysteria: { transports: ["tcp"], tls: "required", reality: false },
+  hysteria2: { transports: ["tcp"], tls: "required", reality: false },
+  tuic: { transports: ["tcp"], tls: "required", reality: false },
+  wireguard: { transports: ["tcp"], tls: "unsupported" },
+  anytls: { transports: ["tcp"], tls: "required", reality: false },
+  http: { transports: ["tcp"], tls: "supported", reality: false },
+  socks5: { transports: ["tcp"], tls: "unsupported" },
+} satisfies Record<string, ProtocolCapability>
+
+export const URI_PROTOCOLS = Object.keys(URI_PROTOCOL_OPTIONS)
 
 function queryString(entries: Array<[string, unknown]>) {
   const params = new URLSearchParams()
@@ -114,7 +117,15 @@ export function renderUriNode(node: CanonicalNode) {
         // Trojan is TLS by definition, so `security=tls` says nothing a reader did not know.
         [
           "security",
-          reality ? "reality" : node.type === "trojan" ? undefined : node.tls ? "tls" : "none",
+          reality
+            ? "reality"
+            : node.tls === false
+              ? "none"
+              : node.type === "trojan"
+                ? undefined
+                : node.tls
+                  ? "tls"
+                  : "none",
         ],
         // VLESS states its encryption; it travels through rather than being assumed.
         ["encryption", node.type === "vless" ? node.encryption : undefined],

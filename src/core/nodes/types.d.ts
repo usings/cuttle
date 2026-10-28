@@ -40,6 +40,8 @@ export interface Diagnostic {
   code: string
   message: string
   line?: number
+  /** Zero-based position in a multi-source compile; line remains local to that source. */
+  sourceIndex?: number
 }
 
 /** What a parser produces: shaped like a node, but not yet guaranteed to be one. */
@@ -105,7 +107,7 @@ export type NodeProcessor =
     }
 
 export interface CompileRequest {
-  source: string
+  source: string | string[]
   target: TargetId
   processors?: NodeProcessor[]
 }

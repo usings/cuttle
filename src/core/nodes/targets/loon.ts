@@ -3,6 +3,7 @@ import type { CanonicalNode } from "../types"
 import { alpnList, asRecord } from "../values"
 import { wireGuardAddresses } from "../wireguard"
 import { defineTarget } from "./define"
+import type { QuotedValue } from "./shared/node-line"
 import {
   credentialsFit,
   parameters,
@@ -11,6 +12,20 @@ import {
   streamOptions,
   value,
 } from "./shared/node-line"
+import type { ProtocolCapability } from "./types"
+
+const PROTOCOL_OPTIONS = {
+  ss: { transports: ["tcp"], tls: "unsupported" },
+  ssr: { transports: ["tcp"], tls: "unsupported" },
+  vmess: { transports: ["tcp", "ws", "http"], tls: "supported" },
+  vless: { transports: ["tcp", "ws", "http"], tls: "supported" },
+  trojan: { transports: ["tcp", "ws"], tls: "supported" },
+  hysteria2: { transports: ["tcp"], tls: "required", reality: false },
+  anytls: { transports: ["tcp"], tls: "required" },
+  http: { transports: ["tcp"], tls: "supported", reality: false },
+  socks5: { transports: ["tcp"], tls: "unsupported" },
+  wireguard: { transports: ["tcp"], tls: "unsupported" },
+} satisfies Record<string, ProtocolCapability>
 
 function loonTlsParameters(node: CanonicalNode) {
   const reality = asRecord(node["reality-opts"])
@@ -33,10 +48,10 @@ function loonNode(node: CanonicalNode) {
   if (!credentialsFit(node, /"/)) return null
   const network = value(node.network || "tcp")
   const stream = streamOptions(node, network)
-  let parts: Array<string | number>
+  let parts: Array<string | number | QuotedValue>
   switch (node.type) {
     case "ss": {
-      if (network !== "tcp" || pluginBeyondObfs(node)) return null
+      if (pluginBeyondObfs(node)) return null
       const wrapper = shadowTls(node)
       if (wrapper && wrapper.version < 2) return null
       const plugin = shadowsocksPlugin(node)
@@ -60,7 +75,6 @@ function loonNode(node: CanonicalNode) {
       break
     }
     case "ssr":
-      if (network !== "tcp") return null
       // Loon names the SSR parameters rather than taking them as a positional tail in braces.
       parts = [
         "shadowsocksr",
@@ -77,7 +91,6 @@ function loonNode(node: CanonicalNode) {
       ]
       break
     case "vmess":
-      if (!["tcp", "ws", "http"].includes(network)) return null
       parts = [
         "vmess",
         node.server,
@@ -95,7 +108,6 @@ function loonNode(node: CanonicalNode) {
       break
     case "trojan":
       // Trojan is the one Loon reads over WebSocket but not over HTTP.
-      if (!["tcp", "ws"].includes(network)) return null
       parts = [
         "trojan",
         node.server,
@@ -110,7 +122,6 @@ function loonNode(node: CanonicalNode) {
       ]
       break
     case "vless":
-      if (!["tcp", "ws", "http"].includes(network)) return null
       parts = [
         "vless",
         node.server,
@@ -144,7 +155,6 @@ function loonNode(node: CanonicalNode) {
       parts = ["anytls", node.server, node.port, quoted(node.password), ...loonTlsParameters(node)]
       break
     case "http":
-      if (network !== "tcp") return null
       parts = [
         node.tls ? "https" : "http",
         node.server,
@@ -195,20 +205,8 @@ function loonNode(node: CanonicalNode) {
 export const loonTarget = defineTarget({
   id: "loon",
   label: "Loon",
-  protocols: [
-    "ss",
-    "ssr",
-    "vmess",
-    "vless",
-    "trojan",
-    "hysteria2",
-    "anytls",
-    "http",
-    "socks5",
-    "wireguard",
-  ],
-  // Loon's `transport=` takes tcp, ws or http; there is no gRPC line to write.
-  transports: ["tcp", "ws", "http"],
+  protocols: Object.keys(PROTOCOL_OPTIONS),
+  protocolOptions: PROTOCOL_OPTIONS,
   uniqueNames: true,
   renderedName: policyName,
   contentType: "text/plain; charset=utf-8",

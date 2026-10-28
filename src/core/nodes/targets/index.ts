@@ -4,12 +4,10 @@ import { jsonTarget } from "./json"
 import { loonTarget } from "./loon"
 import { mihomoTarget } from "./mihomo"
 import { quantumultXTarget } from "./quantumult-x"
-import { shadowrocketTarget } from "./shadowrocket"
 import { singBoxTarget } from "./sing-box"
 import { stashTarget } from "./stash"
 import { surfboardTarget } from "./surfboard"
 import { surgeTarget } from "./surge"
-import { surgeMacTarget } from "./surge-mac"
 import type { Target } from "./types"
 import { uriTarget } from "./uri"
 import { v2rayTarget } from "./v2ray"
@@ -28,11 +26,9 @@ const TARGETS = [
   xrayTarget,
   quantumultXTarget,
   surgeTarget,
-  surgeMacTarget,
   egernTarget,
   stashTarget,
   loonTarget,
-  shadowrocketTarget,
   surfboardTarget,
   v2rayTarget,
 ]

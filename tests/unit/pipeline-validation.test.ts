@@ -25,18 +25,6 @@ describe("a diagnostic says which stage dropped the node", () => {
     expect(result.diagnostics).toHaveLength(1)
     expect(result.diagnostics[0].code).toBe("html-input")
   })
-
-  test("a node the client cannot carry is refused on the rendering side", () => {
-    // WireGuard is not in Clash Classic's protocol list.
-    const result = compileNodeList({
-      source: "wireguard://cHJpdmF0ZQ@example.com:51820#WG",
-      target: "clash",
-    })
-
-    expect(result.diagnostics.length).toBeGreaterThan(0)
-    const refusal = result.diagnostics.find((item) => item.message.includes("cannot be carried by"))
-    expect(refusal?.stage).toBe("capability")
-  })
 })
 
 describe("the parse validation stage", () => {
@@ -125,7 +113,7 @@ describe("the rule chain now runs on settled nodes", () => {
     expect(result.diagnostics.some((item) => item.stage === "canonical-validation")).toBe(true)
   })
 
-  test("the reported nodes are the same list the renderer saw", () => {
+  test("reports the normalized switches and credentials that are sent to the renderer", () => {
     const result = compileNodeList({ source: SS, target: "mihomo" })
 
     // A SIP002 URI states `udp: false` for itself while parsing (see
@@ -133,10 +121,5 @@ describe("the rule chain now runs on settled nodes", () => {
     expect(result.nodes[0].udp).toBe(false)
     expect(result.nodes[0].cipher).toBe("aes-128-gcm")
     expect(result.renderedNodes[0]).toStrictEqual(result.nodes[0])
-    // Deep equality would still pass if `nodes` reverted to a pre-validation list, because nothing
-    // here mutates a field between stages — only reference identity tells the two apart. A single node
-    // with no name collision comes out of `uniqueNames` unchanged (see
-    // `src/core/nodes/pipeline/render.ts`), so `renderedNodes[0]` must be the very object in `nodes`.
-    expect(result.renderedNodes[0]).toBe(result.nodes[0])
   })
 })

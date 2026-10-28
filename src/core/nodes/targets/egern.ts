@@ -5,6 +5,21 @@ import type { CanonicalNode } from "../types"
 import { asRecord, compactRecord, firstOf } from "../values"
 import { defineTarget } from "./define"
 import { EGERN_CIPHERS, cipherOf } from "./shared/ciphers"
+import type { ProtocolCapability } from "./types"
+
+const PROTOCOL_OPTIONS = {
+  ss: { transports: ["tcp"], tls: "unsupported" },
+  vmess: { transports: ["tcp", "ws", "http", "h2", "grpc"], tls: "supported" },
+  vless: { transports: ["tcp", "ws", "http", "h2", "grpc"], tls: "supported" },
+  trojan: { transports: ["tcp", "ws"], tls: "required", reality: false },
+  hysteria2: { transports: ["tcp"], tls: "required", reality: false },
+  tuic: { transports: ["tcp"], tls: "required", reality: false },
+  anytls: { transports: ["tcp"], tls: "required", reality: false },
+  http: { transports: ["tcp"], tls: "supported", reality: false },
+  socks5: { transports: ["tcp"], tls: "unsupported" },
+  snell: { transports: ["tcp"], tls: "unsupported" },
+  ssh: { transports: ["tcp"], tls: "unsupported" },
+} satisfies Record<string, ProtocolCapability>
 
 function reality(node: CanonicalNode) {
   const options = asRecord(node["reality-opts"])
@@ -128,7 +143,6 @@ function egernNode(node: CanonicalNode) {
     // `websocket` block, not the `transport` wrapper VMess and VLESS have. An Egern trojan proxy has
     // no `transport` key at all, so gRPC and the rest belong to VMess and VLESS alone.
     const network = String(node.network ?? "tcp")
-    if (!["tcp", "ws"].includes(network)) return null
     const options = asRecord(node["ws-opts"])
     const headers = asRecord(options?.headers)
     return wrap("trojan", {
@@ -196,20 +210,8 @@ function egernNode(node: CanonicalNode) {
 export const egernTarget = defineTarget({
   id: "egern",
   label: "Egern",
-  protocols: [
-    "ss",
-    "vmess",
-    "vless",
-    "trojan",
-    "hysteria2",
-    "tuic",
-    "anytls",
-    "http",
-    "socks5",
-    "snell",
-    "ssh",
-  ],
-  transports: ["tcp", "ws", "http", "h2", "grpc"],
+  protocols: Object.keys(PROTOCOL_OPTIONS),
+  protocolOptions: PROTOCOL_OPTIONS,
   accepts: (node) =>
     (node.type !== "ss" || EGERN_CIPHERS.has(cipherOf(node))) &&
     (node.type !== "snell" || snellVersion(node) <= 5) &&

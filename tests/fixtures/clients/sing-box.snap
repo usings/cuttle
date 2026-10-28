@@ -707,7 +707,7 @@
 {
   "outbounds": []
 }
-! VLESS XHTTP (vless/xhttp) cannot be carried by sing-box; skipped.
+! VLESS XHTTP (vless/xhttp) cannot be carried by sing-box; skipped. The transport cannot be represented for this protocol.
 
 ━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · vmess:grpc-tls

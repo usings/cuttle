@@ -1,15 +1,39 @@
 import { shadowsocksPlugin } from "../../plugins"
 import type { CanonicalNode } from "../../types"
 import { asRecord, firstOf } from "../../values"
+import { TargetValidationError } from "../validation"
 
 /**
  * The kit every line-format client is written with. A node line is positional and separator
- * delimited, so most of this is about getting a value onto one safely: normalising it, quoting it the
+ * delimited, so most of this is about getting a value onto one safely: checking it, quoting it the
  * way that client quotes, and refusing it when the separator itself is inside it.
  */
 
+function singleLine(input: unknown) {
+  const text = input === undefined || input === null ? "" : String(input)
+  // oxlint-disable-next-line no-control-regex -- Reject controls instead of rewriting credentials.
+  if (/[\u0000-\u001f\u007f]/.test(text)) {
+    throw new TargetValidationError("A field contains a control character.")
+  }
+  return text
+}
+
+/** A raw positional or parameter value cannot introduce another comma-separated field. */
 export function value(input: unknown) {
-  return input === undefined || input === null ? "" : String(input).replaceAll(/[\r\n]/g, " ")
+  const text = singleLine(input)
+  if (text.includes(",")) {
+    throw new TargetValidationError("An unquoted field contains a comma.")
+  }
+  return text
+}
+
+/** Only a format-aware quoting function can authorize separators inside a value. */
+export class QuotedValue {
+  constructor(private readonly text: string) {}
+
+  toString() {
+    return this.text
+  }
 }
 
 /** `host:port`, with an IPv6 literal bracketed. Also what `uri-node.ts` writes an authority with. */
@@ -18,7 +42,8 @@ export function endpoint(node: CanonicalNode) {
 }
 
 export function parameter(name: string, input: unknown) {
-  return input === undefined || input === null || input === "" ? null : `${name}=${value(input)}`
+  if (input === undefined || input === null || input === "") return null
+  return `${name}=${input instanceof QuotedValue ? input.toString() : value(input)}`
 }
 
 export function parameters(entries: Array<[string, unknown]>) {
@@ -61,13 +86,18 @@ export function streamOptions(node: CanonicalNode, network: string) {
 export function headerList(input: Record<string, unknown> | null) {
   if (!input) return
   const output = Object.entries(input)
-    .map(([key, item]) => `${key}:${value(item)}`)
+    .map(([key, item]) => {
+      if (/[:|]/.test(key) || String(item).includes("|")) {
+        throw new TargetValidationError("A WebSocket header contains a header-list separator.")
+      }
+      return `${value(key)}:${value(item)}`
+    })
     .join("|")
   return output || undefined
 }
 
 export function quoted(input: unknown) {
-  return `"${value(input).replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`
+  return new QuotedValue(`"${singleLine(input).replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`)
 }
 
 /**
@@ -75,7 +105,7 @@ export function quoted(input: unknown) {
  * sequence, so a quote inside the value has to travel as itself.
  */
 export function wrapped(input: unknown) {
-  return `"${value(input)}"`
+  return new QuotedValue(`"${value(input)}"`)
 }
 
 /**
@@ -91,5 +121,10 @@ export function credentialsFit(node: CanonicalNode, forbidden: RegExp) {
 }
 
 export function policyName(node: CanonicalNode) {
-  return value(node.name).replaceAll(/[=,]/g, " ").trim() || `${node.type}-${node.port}`
+  return (
+    String(node.name)
+      // oxlint-disable-next-line no-control-regex -- Policy names cannot introduce line separators.
+      .replaceAll(/[\u0000-\u001f\u007f=,]/g, " ")
+      .trim() || `${node.type}-${node.port}`
+  )
 }

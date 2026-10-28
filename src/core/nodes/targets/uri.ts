@@ -1,12 +1,12 @@
 import { defineTarget } from "./define"
-import { renderUriNode, URI_PROTOCOLS } from "./shared/uri-node"
+import { renderUriNode, URI_PROTOCOL_OPTIONS, URI_PROTOCOLS } from "./shared/uri-node"
 
 /** A plain list of protocol URIs, which nearly every client can import by hand. */
 export const uriTarget = defineTarget({
   id: "uri",
   label: "URI",
   protocols: URI_PROTOCOLS,
-  transports: "all",
+  protocolOptions: URI_PROTOCOL_OPTIONS,
   uniqueNames: false,
   contentType: "text/plain; charset=utf-8",
   fileExtension: "txt",

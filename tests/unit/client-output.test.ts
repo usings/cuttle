@@ -112,16 +112,14 @@ describe("what each client writes", () => {
     expect(wrong).toStrictEqual([])
   })
 
-  test("every example parses to the protocol it is filed under", () => {
-    const misfiled = corpusByProtocol.flatMap((entry) =>
-      entry.examples.flatMap((item) =>
-        [...new Set(inspectNodeList(item.source).nodes.map((node) => node.type))]
-          .filter((type) => type !== entry.protocol)
-          .map((type) => `${item.name} parses as ${type}`),
-      ),
-    )
-
-    expect(misfiled).toStrictEqual([])
+  test("every corpus example produces at least one node of its declared protocol", () => {
+    for (const group of corpusByProtocol) {
+      for (const example of group.examples) {
+        const nodes = inspectNodeList(example.source).nodes
+        expect(nodes.length).toBeGreaterThan(0)
+        expect([...new Set(nodes.map((node) => node.type))]).toStrictEqual([group.protocol])
+      }
+    }
   })
 
   test("the picker offers exactly the clients the registry says are selectable", () => {

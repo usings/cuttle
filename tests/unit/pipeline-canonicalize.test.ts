@@ -379,57 +379,44 @@ describe("a shared rule meeting a parser that answered it differently", () => {
     expect(node.cipher).toBe("none")
   })
 
-  test("a sing-box outbound with no TLS block still marks the protocols that imply it", () => {
+  test.each([
+    ["missing", undefined, false],
+    ["empty", {}, false],
+    ["disabled", { enabled: false }, false],
+    ["enabled", { enabled: true }, true],
+  ])("a sing-box Trojan outbound with %s TLS preserves that setting", (_name, tls, enabled) => {
     const source = JSON.stringify({
-      outbounds: [{ type: "trojan", tag: "T", server: "h.com", server_port: 443, password: "p" }],
+      outbounds: [
+        { type: "trojan", tag: "T", server: "h.com", server_port: 443, password: "p", tls },
+      ],
     })
     const [node] = inspectNodeList(source).nodes
 
-    expect(node.tls).toBe(true)
+    expect(node.tls).toBe(enabled)
     expect(node.network).toBe("tcp")
   })
 
-  test("a sing-box outbound stating tls enabled false is not forced back onto TLS", () => {
-    // The trojan URI's `security=none` above, spelled the way sing-box spells it. The parser dropped it,
-    // leaving `tls` unset, and the implication rule's `?? true` read the silence as consent — so which
-    // answer a source got depended on which parser read it. `false` rather than merely falsy: absence
-    // is exactly the value the defect produced.
-    const source = JSON.stringify({
-      outbounds: [
-        {
-          type: "trojan",
-          tag: "T",
-          server: "h.com",
-          server_port: 443,
-          password: "p",
-          tls: { enabled: false },
-        },
-      ],
-    })
-    const [node] = inspectNodeList(source).nodes
+  test.each([false, true])(
+    "a sing-box outbound behind a CDN uses transport SNI only with TLS enabled=%s",
+    (enabled) => {
+      const source = JSON.stringify({
+        outbounds: [
+          {
+            type: "trojan",
+            tag: "T",
+            server: "1.2.3.4",
+            server_port: 443,
+            password: "p",
+            tls: { enabled },
+            transport: { type: "ws", headers: { Host: "cdn.example.com" } },
+          },
+        ],
+      })
+      const [node] = inspectNodeList(source).nodes
 
-    expect(node.tls).toBe(false)
-  })
-
-  test("a sing-box outbound behind a CDN gains the SNI its implied TLS asks for", () => {
-    // The chain the rule order exists for: the TLS implication has to land before the SNI fallback,
-    // which only looks at a node it believes is speaking TLS.
-    const source = JSON.stringify({
-      outbounds: [
-        {
-          type: "trojan",
-          tag: "T",
-          server: "1.2.3.4",
-          server_port: 443,
-          password: "p",
-          transport: { type: "ws", headers: { Host: "cdn.example.com" } },
-        },
-      ],
-    })
-    const [node] = inspectNodeList(source).nodes
-
-    expect(node.sni).toBe("cdn.example.com")
-  })
+      expect(node.sni).toBe(enabled ? "cdn.example.com" : undefined)
+    },
+  )
 
   test("a sing-box vmess outbound that names no alterId gets the one every reader expects", () => {
     const source = JSON.stringify({
@@ -590,4 +577,20 @@ describe("the canonical node validation stage", () => {
     expect(nodes).toStrictEqual([node])
     expect(diagnostics).toStrictEqual([])
   })
+})
+
+test("Xray explicit plaintext survives parsing and rendering", () => {
+  const source = JSON.stringify({
+    outbounds: [
+      {
+        tag: "Plain",
+        protocol: "trojan",
+        settings: { address: "example.com", port: 443, password: "p" },
+        streamSettings: { network: "tcp", security: "none" },
+      },
+    ],
+  })
+  const result = compileNodeList({ source, target: "xray" })
+  expect(result.nodes[0].tls).toBe(false)
+  expect(JSON.parse(result.content).outbounds[0].streamSettings.security).toBe("none")
 })

@@ -1,69 +1,58 @@
-import { describe, expect, test, vi } from "vitest"
+import { describe, expect, test } from "vitest"
 import { ValidationError } from "@/core/errors"
-import { prepareInput } from "@/core/nodes/pipeline/input"
+import { inspectNodeList } from "@/core/nodes"
 
-describe("the input stage", () => {
-  test("a Base64 envelope is unwrapped and the fact recorded", () => {
-    const inner = "ss://YWVzLTEyOC1nY206cGFzcw@example.com:8388#SS"
-    const encoded = Buffer.from(inner, "utf-8").toString("base64")
-    const prepared = prepareInput(encoded)
+const URI = "trojan://password@example.com:443#Primary"
 
-    expect(prepared.encoded).toBe(true)
-    expect(prepared.text).toBe(inner)
+describe("subscription input", () => {
+  test.each([
+    ["URI", URI, "uri-list"],
+    ["Base64", Buffer.from(URI, "utf-8").toString("base64"), "base64-uri-list"],
+  ])("reads a %s subscription", (_name, source, format) => {
+    const result = inspectNodeList(source)
+    expect(result.detectedFormat).toBe(format)
+    expect(result.nodes).toMatchObject([
+      { name: "Primary", type: "trojan", server: "example.com", port: 443, password: "password" },
+    ])
+    expect(result.nodes).toHaveLength(1)
+    expect(result.diagnostics).toStrictEqual([])
   })
 
-  test("only the [Proxy] section of a Surge configuration is read", () => {
-    const prepared = prepareInput(
+  test("extracts every proxy from a full configuration without reading later sections as nodes", () => {
+    const result = inspectNodeList(
       [
         "[General]",
         "loglevel = notify",
-        "",
         "[Proxy]",
-        "A = ss, example.com, 8388",
-        "",
+        'A = trojan, example.com, 443, password="first"',
+        'B = trojan, example.org, 8443, password="second"',
         "[Rule]",
         "FINAL,DIRECT",
       ].join("\n"),
     )
-
-    expect(prepared.text).toBe("A = ss, example.com, 8388")
-    expect(prepared.encoded).toBe(false)
+    expect(result.nodes.map((node) => [node.name, node.server, node.password])).toStrictEqual([
+      ["A", "example.com", "first"],
+      ["B", "example.org", "second"],
+    ])
+    expect(result.diagnostics).toStrictEqual([])
   })
 
-  test("the document is parsed once and shared by every structured format", () => {
-    const prepared = prepareInput('{"proxies":[]}')
-    const first = prepared.document()
+  test.each(["not a node", '{"proxies":'])(
+    "reports malformed input without inventing nodes",
+    (source) => {
+      const result = inspectNodeList(source)
+      expect(result.nodes).toStrictEqual([])
+      expect(result.diagnostics).not.toHaveLength(0)
+    },
+  )
 
-    expect(first).toStrictEqual({ proxies: [] })
-    // The same object, not an equal one parsed again: four formats read this.
-    expect(prepared.document()).toBe(first)
+  test("enforces the input limit in UTF-8 bytes", () => {
+    expect(() => inspectNodeList("文".repeat(Math.floor((2 * 1024 * 1024) / 3) + 1))).toThrow(
+      ValidationError,
+    )
   })
 
-  test("a source YAML reads as a bare string is not a document", () => {
-    expect(prepareInput("ss://not-a-document").document()).toBeNull()
-  })
-
-  test("a parse that failed is memoized, not retried by every format that asks", () => {
-    const prepared = prepareInput('{"proxies":')
-    // Two nulls prove nothing: an implementation that re-parses on every call returns null every time
-    // too. Counting the parse is the only way to observe the `parsed = true` that sits *before* the
-    // `try`, which is the whole of what `PreparedSource` promises about an unparsable source.
-    const parse = vi.spyOn(JSON, "parse")
-
-    try {
-      expect(prepared.document()).toBeNull()
-      expect(prepared.document()).toBeNull()
-      expect(parse).toHaveBeenCalledOnce()
-    } finally {
-      parse.mockRestore()
-    }
-  })
-
-  test("a source over the size cap is refused before anything reads it", () => {
-    expect(() => prepareInput("a".repeat(2 * 1024 * 1024 + 1))).toThrow(ValidationError)
-  })
-
-  test("a source that is not a string is refused", () => {
-    expect(() => prepareInput(undefined as unknown as string)).toThrow(ValidationError)
+  test("rejects a non-string input at the public boundary", () => {
+    expect(() => inspectNodeList(undefined as unknown as string)).toThrow(ValidationError)
   })
 })

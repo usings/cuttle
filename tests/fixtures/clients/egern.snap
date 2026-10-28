@@ -240,11 +240,11 @@ proxies:
 ━━ trojan 3/6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · trojan:grpc-tls
 proxies: []
-! Trojan gRPC (trojan/grpc) has no egern spelling; skipped.
+! Trojan gRPC (trojan/grpc) cannot be carried by egern; skipped. The transport cannot be represented for this protocol.
 
 · trojan:httpupgrade
 proxies: []
-! Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped.
+! Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped. The transport cannot be represented for this protocol.
 
 · trojan:no-udp
 proxies:
@@ -282,12 +282,12 @@ proxies:
 
 · trojan:xray-json-httpupgrade
 proxies: []
-! Xray Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped.
+! Xray Upgrade (trojan/httpupgrade) cannot be carried by egern; skipped. The transport cannot be represented for this protocol.
 
 ━━ tuic 1/3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · tuic:v4
 proxies: []
-! TUIC v4 (tuic/tcp) cannot be carried by egern; skipped.
+! TUIC v4 (tuic/tcp) cannot be carried by egern; skipped. The protocol options are unsupported.
 
 · tuic:v5
 proxies:
@@ -303,7 +303,7 @@ proxies:
 
 · tuic:surge-line-v4
 proxies: []
-! TUIC Line (tuic/tcp) cannot be carried by egern; skipped.
+! TUIC Line (tuic/tcp) cannot be carried by egern; skipped. The protocol options are unsupported.
 
 ━━ vless 6/8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · vless:grpc-multi
@@ -402,7 +402,7 @@ proxies:
 
 · vless:xhttp-reality
 proxies: []
-! VLESS XHTTP (vless/xhttp) cannot be carried by egern; skipped.
+! VLESS XHTTP (vless/xhttp) cannot be carried by egern; skipped. The transport cannot be represented for this protocol.
 
 ━━ vmess 7/7 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 · vmess:grpc-tls

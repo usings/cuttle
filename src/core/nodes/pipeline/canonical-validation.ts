@@ -1,6 +1,17 @@
 import type { CanonicalNode, Diagnostic } from "../types"
 import { isDialablePort } from "../values"
 
+function isBareHost(server: string) {
+  if (server.includes("[") || server.includes("]")) return false
+  if (!server.includes(":")) return true
+  try {
+    // A colon denotes an IPv6 literal, not an embedded port or arbitrary authority syntax.
+    return new URL(`http://[${server}]/`).hostname.startsWith("[")
+  } catch {
+    return false
+  }
+}
+
 /**
  * The single gate every node passes before any client sees it.
  *
@@ -21,13 +32,16 @@ export function validateCanonical(nodes: CanonicalNode[]) {
       node.name.length === 0 ||
       typeof node.server !== "string" ||
       node.server.length === 0 ||
+      // oxlint-disable-next-line no-control-regex -- A dialable host cannot carry control characters.
+      /[\s\u0000-\u001f\u007f,=/?#@\\"'|]/.test(node.server) ||
+      !isBareHost(node.server) ||
       !isDialablePort(node.port)
     if (!broken) return true
     diagnostics.push({
       level: "warning",
       stage: "canonical-validation",
       code: "invalid-canonical-node",
-      message: `${String(node.name || node.server || node.type)} is not a valid node (invalid type, name, server or port); skipped.`,
+      message: `${String(node.name || node.server || node.type).replaceAll(/[\r\n]/g, " ")} is not a valid node (invalid type, name, server or port); skipped.`,
     })
     return false
   })

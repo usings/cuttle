@@ -90,7 +90,9 @@ function stated(value: unknown) {
 export function canonicalize(draft: DraftNode): CanonicalNode {
   const sourceType = String(draft.type ?? "")
   const type = canonicalType(sourceType)
-  const server = String(stated(draft.server) ?? stated(draft.address) ?? "")
+  const address = String(stated(draft.server) ?? stated(draft.address) ?? "")
+  // IPv6 brackets belong to an authority, never to the stored host itself.
+  const server = /^\[[0-9a-f:.]*:[0-9a-f:.]*\]$/i.test(address) ? address.slice(1, -1) : address
   const port = integer(draft.port as string | number, integer(draft.server_port as string | number))
 
   // Everything beyond the four required fields travels through untouched, which is what lets a

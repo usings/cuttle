@@ -1,6 +1,7 @@
 import type { RenderUnit, Target } from "../targets/types"
+import { TargetValidationError } from "../targets/validation"
 import type { CanonicalNode, Diagnostic, Stage } from "../types"
-import { acceptsNode } from "./capability"
+import { capabilityIssue } from "./capability"
 
 function renamed(node: CanonicalNode, name: string) {
   return name === node.name ? node : { ...node, name }
@@ -98,11 +99,26 @@ export function renderDocument(nodes: CanonicalNode[], target: Target) {
   const units: RenderUnit[] = []
 
   for (const node of target.uniqueNames ? uniqueNames(nodes, target) : nodes) {
-    if (!acceptsNode(target, node)) {
-      diagnostics.push(refusal(node, target, "capability"))
+    const issue = capabilityIssue(target, node)
+    if (issue) {
+      const diagnostic = refusal(node, target, "capability")
+      // Protocol-only refusals already say enough; connection-property failures explain the loss.
+      if (target.protocolOptions?.[node.type]) {
+        diagnostic.message += ` ${issue}`
+      }
+      diagnostics.push(diagnostic)
       continue
     }
-    const rendered = target.renderNode(node)
+    let rendered: RenderUnit[] | null
+    try {
+      rendered = target.renderNode(node)
+    } catch (error) {
+      if (!(error instanceof TargetValidationError)) throw error
+      const diagnostic = refusal(node, target, "target-validation")
+      diagnostic.message += ` ${scrubbed(error.message)}`
+      diagnostics.push(diagnostic)
+      continue
+    }
     if (rendered === null || rendered.length === 0) {
       diagnostics.push(refusal(node, target, "target-validation"))
       continue
