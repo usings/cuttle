@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 export interface UseWebWorkerReturn<TInput = unknown, TOutput = unknown> {
-  isSupported: boolean
+  isAvailable: boolean
   data: TOutput | null
   error: string | null
   post: (payload: TInput) => boolean
@@ -44,15 +44,14 @@ export function useWebWorker<TInput = unknown, TOutput = unknown>(
   const workerRef = useRef<Worker | null>(null)
   const [data, setData] = useState<TOutput | null>(null)
   const [error, setError] = useState<string | null>(null)
-
-  const isSupported = typeof Worker !== "undefined"
+  const [isAvailable, setIsAvailable] = useState(false)
 
   useEffect(() => {
     factory.current = create
   })
 
   useEffect(() => {
-    if (!isSupported) return
+    if (typeof Worker === "undefined") return
     const created = createWorker(factory.current)
     if (!created.worker) {
       // Creating the worker is the external system, and its refusal has nowhere else to be
@@ -62,32 +61,43 @@ export function useWebWorker<TInput = unknown, TOutput = unknown>(
     }
     const worker = created.worker
     workerRef.current = worker
+    setIsAvailable(true)
 
     worker.addEventListener("message", (event) => setData(event.data as TOutput))
-    worker.addEventListener("error", (event) =>
-      setError(event.message || "Worker execution failed"),
-    )
+    worker.addEventListener("error", (event) => {
+      worker.terminate()
+      workerRef.current = null
+      setIsAvailable(false)
+      setError(event.message || "Worker execution failed")
+    })
 
     return () => {
       worker.terminate()
       workerRef.current = null
     }
-  }, [isSupported])
+  }, [])
 
   const post = useCallback((payload: TInput) => {
     const worker = workerRef.current
     if (!worker) return false
-    // `Worker#postMessage`'s second argument is a transfer list, not a target origin — the rule is
-    // about `window.postMessage`, and taking its advice here throws.
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- see above
-    worker.postMessage(payload)
-    return true
+    try {
+      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- Worker API takes a transfer list.
+      worker.postMessage(payload)
+      return true
+    } catch (error_) {
+      worker.terminate()
+      workerRef.current = null
+      setIsAvailable(false)
+      setError(error_ instanceof Error ? error_.message : "Worker could not accept the request")
+      return false
+    }
   }, [])
 
   const terminate = useCallback(() => {
     workerRef.current?.terminate()
     workerRef.current = null
+    setIsAvailable(false)
   }, [])
 
-  return { isSupported, data, error, post, terminate }
+  return { isAvailable, data, error, post, terminate }
 }

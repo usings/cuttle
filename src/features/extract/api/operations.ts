@@ -21,7 +21,7 @@ export async function readRemoteSource(input: unknown) {
         cause: resolved.error,
       })
     }
-    return { content: resolved.source.content }
+    return { contents: resolved.source.contents }
   } catch (error) {
     if (error instanceof ValidationError) {
       throw new AdminFailure("invalid_definition", error.message, { cause: error })

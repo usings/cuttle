@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import type { NodeProcessor, TargetId } from "@/core/nodes"
+import type { CompileRequest, NodeProcessor, TargetId } from "@/core/nodes"
 import { useWebWorker } from "@/shared/web-worker"
 import { compileForWorkbench } from "./compile"
 import type { CompiledOutput, CompileOutcome } from "./compile"
@@ -62,12 +62,13 @@ export function useExtractRun() {
   const {
     data: answer,
     error: workerError,
-    isSupported,
     post,
   } = useWebWorker<CompileMessage, CompileAnswer>(createCompileWorker)
   // Which run is outstanding, so an answer to a superseded one is dropped rather than shown as a
   // description of inputs the user has already changed.
-  const pending = useRef<{ id: number; inputs: ExtractInputs } | null>(null)
+  const pending = useRef<{ id: number; inputs: ExtractInputs; request: CompileRequest } | null>(
+    null,
+  )
   const nextId = useRef(0)
 
   // Stable, so the effect below may depend on it and the two paths a run can settle through — the
@@ -85,14 +86,22 @@ export function useExtractRun() {
     settle(request.inputs, { error: answer.error, output: answer.output })
   }, [answer, settle])
 
-  function run(inputs: ExtractInputs, text: string) {
+  useEffect(() => {
+    const request = pending.current
+    if (!workerError || !request) return
+    pending.current = null
+    settle(request.inputs, compileForWorkbench(request.request))
+  }, [workerError, settle])
+
+  function run(inputs: ExtractInputs, text: string | string[]) {
     const request = { processors: inputs.processors, source: text, target: inputs.target }
     nextId.current += 1
-    pending.current = { id: nextId.current, inputs }
+    pending.current = { id: nextId.current, inputs, request }
     // `post` is asked, not assumed: it refuses when there is no live worker to take the message, and
     // a run posted into nothing would leave the button reading 生成中 with no answer ever coming.
-    if (isSupported && post({ ...request, id: nextId.current })) {
+    if (post({ ...request, id: nextId.current })) {
       setGenerating(true)
+      setErrorMessage("")
       return
     }
     // Nothing took it, so it runs here — a frozen frame beats no output.
@@ -102,10 +111,8 @@ export function useExtractRun() {
 
   return {
     generated,
-    // A worker that died takes the run with it, and no answer is ever coming: reporting the failure
-    // is also what stops the button saying "生成中" for the rest of the session.
-    errorMessage: workerError ?? errorMessage,
-    generating: generating && workerError === null,
+    errorMessage,
+    generating,
     run,
   }
 }

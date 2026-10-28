@@ -130,7 +130,7 @@ export function ExtractWorkbench() {
     },
   }
   async function generate() {
-    let text = source
+    let text: string | string[] = source
     if (remoteMode) {
       const content = await readRemoteSource
         .mutateAsync(splitSourceUrls(sourceUrl))
@@ -450,7 +450,12 @@ export function ExtractWorkbench() {
                     >
                       <ul className="mask-b-from-85% max-h-40 list-disc space-y-1 overflow-y-auto pb-6 pl-4">
                         {generated.diagnostics.map((diagnostic, index) => (
-                          <li key={`${diagnostic.code}-${diagnostic.line ?? index}`}>
+                          <li
+                            key={`${diagnostic.sourceIndex ?? 0}-${diagnostic.code}-${diagnostic.line ?? index}`}
+                          >
+                            {diagnostic.sourceIndex === undefined
+                              ? ""
+                              : `来源 ${diagnostic.sourceIndex + 1}：`}
                             {diagnostic.message}
                           </li>
                         ))}

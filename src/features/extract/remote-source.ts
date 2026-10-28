@@ -9,7 +9,7 @@ import * as api from "./api/server-fn"
 export function useReadRemoteSource() {
   return useMutation({
     mutationFn: (urls: string[]) =>
-      api.readRemoteSource({ data: { urls } }).then((payload) => payload.content),
+      api.readRemoteSource({ data: { urls } }).then((payload) => payload.contents),
     onSuccess: (_content, urls) =>
       showSuccess(urls.length > 1 ? `已获取 ${urls.length} 个远程订阅` : "已获取远程订阅"),
     onError: (error) => showError(error, "远程订阅读取失败。"),
