@@ -5,6 +5,7 @@ const HTTP_STATUS: Record<AdminErrorCode, number> = {
   invalid_request: 400,
   unauthorized: 401,
   not_found: 404,
+  conflict: 409,
   payload_too_large: 413,
   invalid_definition: 422,
   internal: 500,

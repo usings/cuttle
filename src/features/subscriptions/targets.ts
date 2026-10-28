@@ -9,9 +9,7 @@ import type { TargetId } from "@/core/nodes"
 const TARGET_DISPLAY_ORDER: TargetId[] = [
   "uri",
   "quantumult-x",
-  "shadowrocket",
   "surge",
-  "surge-mac",
   "surfboard",
   "loon",
   "mihomo",

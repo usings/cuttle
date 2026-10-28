@@ -1,3 +1,5 @@
+import { ConflictError } from "@/core/errors"
+import type { TargetId } from "@/core/nodes"
 import { parseSubscriptionDraft, parseSubscriptionUpdate } from "./schema"
 import { subscriptionSourceHosts } from "./source-resolver"
 import { mintSubscriptionToken, tokenHint } from "./token"
@@ -16,6 +18,10 @@ export class SubscriptionPublishing {
 
   get(id: string) {
     return this.repository.findById(id)
+  }
+
+  readSnapshot(id: string, target: TargetId) {
+    return this.repository.readSnapshot(id, target)
   }
 
   async publish(input: unknown): Promise<PublishedSubscription> {
@@ -38,7 +44,10 @@ export class SubscriptionPublishing {
   async update(id: string, input: unknown) {
     const current = await this.repository.findById(id)
     if (!current) return null
-    const draft = parseSubscriptionUpdate(current, input)
+    const { draft, expectedVersion = current.version } = parseSubscriptionUpdate(current, input)
+    if (expectedVersion !== current.version) {
+      throw new ConflictError("The subscription changed during this update. Reload and try again.")
+    }
     subscriptionSourceHosts(draft.source)
     const subscription: SubscriptionRecord = {
       ...current,
@@ -47,7 +56,11 @@ export class SubscriptionPublishing {
       updatedAt: new Date().toISOString(),
       lastError: undefined,
     }
-    await this.repository.update(subscription)
+    const outcome = await this.repository.update(subscription, expectedVersion)
+    if (outcome === "not-found") return null
+    if (outcome === "conflict") {
+      throw new ConflictError("The subscription changed during this update. Reload and try again.")
+    }
     return subscription
   }
 

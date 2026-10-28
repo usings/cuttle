@@ -23,6 +23,7 @@ export default defineConfig({
             main: "./tests/integration/entry.ts",
             wrangler: { configPath: "./wrangler.json" },
             miniflare: {
+              d1Databases: { DB: "test-subscriptions", MIGRATION_DB: "test-upgrade" },
               bindings: {
                 CUTTLE_TOKEN: "test-admin-token",
                 TEST_MIGRATIONS: await readD1Migrations("./migrations"),

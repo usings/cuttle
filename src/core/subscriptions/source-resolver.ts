@@ -13,7 +13,8 @@ export interface ResolveSourceOptions {
 }
 
 export interface ResolvedSubscriptionSource {
-  content: string
+  /** Independent source documents in URL order; concatenating them destroys structured formats. */
+  contents: string[]
   responseHeaders: Record<string, string>
 }
 
@@ -284,7 +285,7 @@ async function fetchOne(
       })
     }
     return {
-      content,
+      contents: [content],
       responseHeaders: Object.fromEntries(
         FORWARDED_RESPONSE_HEADERS.flatMap((name) => {
           const value = response.headers.get(name)
@@ -331,11 +332,8 @@ async function fetchRemote(source: RemoteSubscriptionSource, options: ResolveSou
   )
   if (failed) throw firstError
   if (resolved.length === 1) return resolved[0]
-  const bodies = resolved.map((item) => item.content).filter(Boolean)
-  budget.consume(Math.max(0, bodies.length - 1))
-  const content = bodies.join("\n")
   return {
-    content,
+    contents: resolved.flatMap((item) => item.contents),
     responseHeaders: Object.assign({}, ...resolved.map((item) => item.responseHeaders)),
   }
 }
@@ -345,7 +343,7 @@ export async function readSubscriptionSource(
   options: ResolveSourceOptions,
 ): Promise<SourceReadOutcome> {
   if (source.type === "raw") {
-    return { kind: "ready", source: { content: source.content, responseHeaders: {} } }
+    return { kind: "ready", source: { contents: [source.content], responseHeaders: {} } }
   }
   try {
     return { kind: "ready", source: await fetchRemote(source, options) }

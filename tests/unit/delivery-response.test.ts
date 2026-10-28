@@ -1,81 +1,69 @@
 import { describe, expect, test } from "vitest"
-import { targetDefinition } from "@/core/nodes"
+import type { TargetId } from "@/core/nodes"
 import type { DeliveryResult } from "@/core/subscriptions"
 import { deliveryResponse } from "@/server/delivery-response"
+import { artifactFixture, NODE_LINE, subscriptionFixture } from "../support/subscriptions"
 
-/**
- * The media type and the file extension a subscriber is served come from the target definition and
- * from nowhere else. There is no column left to store them in, so this is the whole of that promise:
- * change what a client's documents are, and every already-compiled artifact is described the new way
- * on its next delivery rather than keeping the media type it was written under.
- */
 function delivery(overrides: Partial<DeliveryResult> = {}): DeliveryResult {
+  const subscription = subscriptionFixture({ name: "my nodes" })
   return {
-    subscription: {
-      id: "s",
-      tokenHint: "hint",
-      name: "my nodes",
-      defaultTarget: "mihomo",
-      enabled: true,
-      version: 1,
-      createdAt: "2026-08-18T00:00:00.000Z",
-      updatedAt: "2026-08-18T00:00:00.000Z",
-    },
-    artifact: {
-      subscriptionId: "s",
-      target: "mihomo",
-      subscriptionVersion: 1,
-      etag: '"etag"',
-      nodeCount: 3,
-      responseHeaders: {},
-      createdAt: "2026-08-18T00:00:00.000Z",
-    },
-    content: "proxies: []\n",
+    subscription,
+    artifact: artifactFixture(subscription.id),
+    content: NODE_LINE,
     stale: false,
     ...overrides,
   }
 }
 
-describe("what a delivered subscription says about itself", () => {
-  test("the media type and the extension are the target's, not the artifact's", () => {
-    const definition = targetDefinition("mihomo")
+const CACHE_POLICY = "public, max-age=60, stale-while-revalidate=300, stale-if-error=86400"
 
-    const response = deliveryResponse(delivery())
+describe("subscriber HTTP responses", () => {
+  test.each([
+    ["surge", "text/plain; charset=utf-8", "conf"],
+    ["mihomo", "text/yaml; charset=utf-8", "yaml"],
+    ["sing-box", "application/json; charset=utf-8", "json"],
+  ] satisfies Array<[TargetId, string, string]>)(
+    "describes a %s document",
+    async (target, mediaType, extension) => {
+      const input = delivery()
+      input.artifact.target = target
+      const response = deliveryResponse(input)
+      expect(response.status).toBe(200)
+      expect(response.headers.get("Content-Type")).toBe(mediaType)
+      expect(response.headers.get("Content-Disposition")).toBe(
+        `inline; filename="my-nodes.${extension}"`,
+      )
+      expect(response.headers.get("X-Node-Count")).toBe("1")
+      expect(await response.text()).toBe(NODE_LINE)
+    },
+  )
 
-    expect(response.headers.get("Content-Type")).toBe(definition.contentType)
-    expect(response.headers.get("Content-Disposition")).toBe(
-      `inline; filename="my-nodes.${definition.fileExtension}"`,
+  test("sanitizes a Unicode or quoted filename before putting it in a header", () => {
+    const input = delivery()
+    input.subscription.name = '香港 "节点"'
+    expect(deliveryResponse(input).headers.get("Content-Disposition")).toBe(
+      'inline; filename="cuttle.conf"',
     )
   })
 
-  test("the filename is stripped of anything a header cannot carry", () => {
-    const response = deliveryResponse(
-      delivery({ subscription: { ...delivery().subscription, name: '香港 "节点"' } }),
-    )
-
-    expect(response.headers.get("Content-Disposition")).toBe('inline; filename="cuttle.yaml"')
-  })
-
-  test("a caller that already holds the artifact gets no body and no media type", () => {
-    // A 304 restates cache policy — validator headers replace the stored ones — but describes no
-    // document, because it is not sending one.
+  test("a conditional response restates validators and cache policy without a document body", async () => {
     const response = deliveryResponse(delivery({ content: null }))
-
     expect(response.status).toBe(304)
+    expect(await response.text()).toBe("")
     expect(response.headers.get("Content-Type")).toBeNull()
-    expect(response.headers.get("ETag")).toBe('"etag"')
+    expect(response.headers.get("X-Node-Count")).toBeNull()
+    expect(response.headers.get("ETag")).toBe('"fixture-etag"')
+    expect(response.headers.get("Cache-Control")).toBe(CACHE_POLICY)
+    expect(response.headers.get("CDN-Cache-Control")).toBe(CACHE_POLICY)
   })
 
-  test("the upstream's own traffic metadata is forwarded unchanged", () => {
-    const response = deliveryResponse(
-      delivery({
-        artifact: {
-          ...delivery().artifact,
-          responseHeaders: { "subscription-userinfo": "upload=0; download=1" },
-        },
-      }),
-    )
-
-    expect(response.headers.get("subscription-userinfo")).toBe("upload=0; download=1")
-  })
+  test.each([false, true])(
+    "stale=%s is observable alongside upstream traffic metadata",
+    (stale) => {
+      const response = deliveryResponse(delivery({ stale }))
+      expect(response.headers.get("X-Cuttle-Stale")).toBe(stale ? "1" : "0")
+      expect(response.headers.get("Warning")).toBe(stale ? '110 - "Response is stale"' : null)
+      expect(response.headers.get("subscription-userinfo")).toBe("upload=1")
+    },
+  )
 })

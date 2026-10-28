@@ -1,7 +1,7 @@
-import { ValidationError } from "@/core/errors"
+import { ConflictError, ValidationError } from "@/core/errors"
 import { TARGET_IDS } from "@/core/nodes"
 import type { TargetId } from "@/core/nodes"
-import { subscriptionDelivery, subscriptionPublishing } from "@/server/subscription-services"
+import { subscriptionPublishing } from "@/server/subscription-services"
 import { AdminFailure } from "@/shared/admin-error"
 import type { CredentialPayload, SubscriptionListPayload, SubscriptionPayload } from "./contract"
 
@@ -45,6 +45,9 @@ export async function updateSubscription({
     if (!subscription) throw new AdminFailure("not_found", "Subscription not found.")
     return { subscription }
   } catch (error) {
+    if (error instanceof ConflictError) {
+      throw new AdminFailure("conflict", error.message, { cause: error })
+    }
     if (error instanceof ValidationError) {
       throw new AdminFailure("invalid_definition", error.message, { cause: error })
     }
@@ -64,7 +67,7 @@ export async function readSubscriptionSnapshot({
   if (!TARGET_IDS.includes(target as TargetId)) {
     throw new AdminFailure("invalid_request", `Unsupported client: ${target}`)
   }
-  const artifact = await subscriptionDelivery().readSnapshot(id, target as TargetId)
+  const artifact = await subscriptionPublishing().readSnapshot(id, target as TargetId)
   if (!artifact) return { snapshot: null }
   return {
     snapshot: {

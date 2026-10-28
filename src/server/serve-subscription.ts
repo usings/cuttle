@@ -14,7 +14,7 @@ export async function serveSubscription(request: Request, token: string): Promis
   const startedAt = Date.now()
   try {
     const requestedTarget = new URL(request.url).searchParams.get("target")
-    if (requestedTarget && !TARGET_IDS.includes(requestedTarget as TargetId)) {
+    if (requestedTarget !== null && !TARGET_IDS.includes(requestedTarget as TargetId)) {
       return text(400, `Unsupported target: ${requestedTarget}`)
     }
 

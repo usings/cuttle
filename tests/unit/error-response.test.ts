@@ -7,6 +7,7 @@ describe("management error adapter", () => {
     ["invalid_request", 400],
     ["unauthorized", 401],
     ["not_found", 404],
+    ["conflict", 409],
     ["invalid_definition", 422],
     ["upstream_unavailable", 502],
   ] as const)("maps an application rejection", async (code, status) => {

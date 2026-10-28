@@ -2,29 +2,11 @@ import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
 import { adminToken } from "../support/admin-token"
 
-/**
- * The admin session, end to end: how a key gets in, what it opens, what happens when the API turns it
- * down, and how it leaves. These are the paths no other kind of test in this repository can reach —
- * `tests/unit` has no DOM and `tests/integration` has no browser — and every one of them is a hinge
- * the session hangs on rather than a permutation.
- *
- * They run against the dev server, so they exercise the server render and the hydration that has to
- * match it. That pairing is the point: the key is seeded from sessionStorage while the module is
- * evaluated (`src/features/session/token.ts`), which is only safe because the reads pin hydration to
- * the value the server rendered.
- */
-
 const STORAGE_KEY = "cuttle:token"
 const GOOD_KEY = adminToken()
 const BAD_KEY = "not-the-admin-key"
 
-/**
- * Puts a key in storage before the document loads. It has to be before: the session seeds itself
- * while its module is evaluated, so a key written after that is a key this page load never sees.
- *
- * The script runs on every document load in the page, and on none of the client-side navigations —
- * which is what lets a test disconnect and then assert that storage stayed empty.
- */
+// Seed before document evaluation so a hard reload exercises the stored-key hydration path.
 async function armSession(page: Page, key: string) {
   await page.addInitScript(
     ({ storageKey, value }: { storageKey: string; value: string }) =>
@@ -80,6 +62,9 @@ test("a stored key opens the admin page on a hard reload, without a hydration co
   await page.goto("/subscriptions")
 
   await expect(adminPageHeading(page)).toBeVisible()
+  await expect(
+    page.getByRole("table").or(page.getByText("还没有持久化订阅", { exact: true })),
+  ).toBeVisible()
   await expect(connectionState(page)).toHaveText("已连接")
 
   // The server rendered with no key and the hydration render has to match that HTML, one frame before

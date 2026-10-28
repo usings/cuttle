@@ -8,6 +8,7 @@ export interface EditorValues {
   defaultTarget: TargetId
   enabled: boolean
   id?: string
+  expectedVersion?: number
   name: string
   processors: NodeProcessor[]
   sourceType: SubscriptionSource["type"]
@@ -33,6 +34,7 @@ function sourceToValues(source: SubscriptionSource) {
 export function editorValuesFromRecord(subscription: SubscriptionRecord): EditorValues {
   return {
     id: subscription.id,
+    expectedVersion: subscription.version,
     name: subscription.name,
     ...sourceToValues(subscription.source),
     defaultTarget: subscription.defaultTarget,

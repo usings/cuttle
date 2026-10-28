@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest"
+import { compileNodeList } from "@/core/nodes"
 import { readSubscriptionSource } from "@/core/subscriptions"
 import type { SubscriptionSource } from "@/core/subscriptions"
 
@@ -131,5 +132,133 @@ describe("reading a remote subscription", () => {
     ).rejects.toThrow(/loopback or private/)
     expect(resolved).toStrictEqual(["a.example.com", "b.example.com"])
     expect(seen).toStrictEqual(["https://a.example.com/1"])
+  })
+})
+
+function remoteNode(name: string) {
+  return { name, type: "trojan", server: "example.com", port: 443, password: "p" }
+}
+
+describe("independent remote source documents", () => {
+  test.each(["yaml", "json", "base64", "mixed"])(
+    "%s sources are parsed separately and merged in URL order",
+    async (format) => {
+      const bodies = ["A", "B"].map((name, index) => {
+        if (format === "yaml" || (format === "mixed" && index === 0)) {
+          return `proxies:\n  - name: ${name}\n    type: trojan\n    server: example.com\n    port: 443\n    password: p\n`
+        }
+        if (format === "json") return JSON.stringify({ proxies: [remoteNode(name)] })
+        return Buffer.from(`trojan://p@example.com:443#${name}`, "utf-8").toString("base64")
+      })
+      let bothStarted: () => void
+      const started = new Promise<void>((resolve) => {
+        bothStarted = resolve
+      })
+      const pending: Array<(response: Response) => void> = []
+      const reading = readSubscriptionSource(
+        remote("https://a.example.com/1", "https://a.example.com/2"),
+        {
+          allowedHosts: ["a.example.com"],
+          fetch: () =>
+            new Promise<Response>((resolve) => {
+              pending.push(resolve)
+              if (pending.length === 2) bothStarted()
+            }),
+        },
+      )
+      await started
+      pending[1](ok(bodies[1]))
+      pending[0](ok(bodies[0]))
+      const outcome = await reading
+      expect(outcome.kind).toBe("ready")
+      if (outcome.kind !== "ready") throw outcome.error
+      expect(outcome.source.contents).toStrictEqual(bodies)
+      const compiled = compileNodeList({ source: outcome.source.contents, target: "uri" })
+      expect(compiled.renderedNodes.map((entry) => entry.name)).toStrictEqual(["A", "B"])
+      expect(compiled.diagnostics).toStrictEqual([])
+    },
+  )
+
+  test("the total byte budget still applies across response bodies", async () => {
+    const { fetcher } = scripted(ok("x".repeat(1024 * 1024)), ok("x".repeat(1024 * 1024 + 1)))
+    const outcome = await readSubscriptionSource(
+      remote("https://a.example.com/1", "https://a.example.com/2"),
+      { allowedHosts: ["a.example.com"], fetch: fetcher },
+    )
+    expect(outcome.kind).toBe("unavailable")
+  })
+})
+
+describe("remote response resource ownership", () => {
+  test("discards a redirect body before fetching its destination", async () => {
+    let cancelled = false
+    const body = new ReadableStream({
+      cancel() {
+        cancelled = true
+      },
+    })
+    let requests = 0
+    const outcome = await readSubscriptionSource(remote("https://a.example.com/1"), {
+      allowedHosts: ["a.example.com"],
+      fetch: () => {
+        requests += 1
+        if (requests === 1)
+          return Promise.resolve(new Response(body, { status: 302, headers: { location: "/2" } }))
+        expect(cancelled).toBe(true)
+        return Promise.resolve(ok())
+      },
+    })
+    expect(outcome.kind).toBe("ready")
+    expect(requests).toBe(2)
+  })
+
+  test.each(["declared", "streamed"])(
+    "cancels a response that exceeds the %s byte budget",
+    async (kind) => {
+      let cancelled = false
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          if (kind === "streamed") controller.enqueue(new Uint8Array(2 * 1024 * 1024 + 1))
+        },
+        cancel() {
+          cancelled = true
+        },
+      })
+      const response = new Response(body, {
+        headers: kind === "declared" ? { "content-length": String(2 * 1024 * 1024 + 1) } : {},
+      })
+      const outcome = await readSubscriptionSource(remote("https://a.example.com/1"), {
+        allowedHosts: ["a.example.com"],
+        fetch: () => Promise.resolve(response),
+      })
+      expect(outcome.kind).toBe("unavailable")
+      expect(cancelled).toBe(true)
+    },
+  )
+
+  test("aborts other in-flight requests when any source fails", async () => {
+    let aborted = false
+    const outcome = await readSubscriptionSource(
+      remote("https://a.example.com/fail", "https://a.example.com/pending"),
+      {
+        allowedHosts: ["a.example.com"],
+        fetch: (url, options) => {
+          if (String(url).endsWith("/fail"))
+            return Promise.resolve(new Response(null, { status: 503 }))
+          const signal = options?.signal
+          if (!signal) throw new Error("Missing cancellation signal")
+          return new Promise<Response>((_resolve, reject) => {
+            const cancel = () => {
+              aborted = true
+              reject(new DOMException("Aborted", "AbortError"))
+            }
+            if (signal.aborted) cancel()
+            else signal.addEventListener("abort", cancel, { once: true })
+          })
+        },
+      },
+    )
+    expect(outcome.kind).toBe("unavailable")
+    expect(aborted).toBe(true)
   })
 })

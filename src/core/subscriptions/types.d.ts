@@ -2,7 +2,7 @@ import type { Diagnostic, NodeProcessor, TargetId } from "@/core/nodes"
 
 export interface RemoteSubscriptionSource {
   type: "remote"
-  /** One or more links; their bodies are fetched and merged in order. */
+  /** One or more links; bodies remain separate until their parsed nodes are merged in URL order. */
   urls: string[]
 }
 
@@ -73,9 +73,15 @@ export interface DeliveryArtifact extends DeliveryArtifactMetadata {
 
 export interface SubscriptionPublishingRepository {
   findById(id: string): Promise<SubscriptionRecord | null>
+  /** Management preview of the last stored output; does not authorize public delivery. */
+  readSnapshot(subscriptionId: string, target: TargetId): Promise<DeliveryArtifact | null>
   list(): Promise<SubscriptionSummary[]>
   create(subscription: SubscriptionRecord, token: string): Promise<void>
-  update(subscription: SubscriptionRecord): Promise<void>
+  /** Atomically replaces metadata and source, and invalidates artifacts, only at expectedVersion. */
+  update(
+    subscription: SubscriptionRecord,
+    expectedVersion: number,
+  ): Promise<"updated" | "conflict" | "not-found">
   rotateToken(id: string, token: string, tokenHint: string, updatedAt: string): Promise<boolean>
   delete(id: string): Promise<boolean>
 }
@@ -83,13 +89,25 @@ export interface SubscriptionPublishingRepository {
 export interface SubscriptionDeliveryRepository {
   /** The delivery path: metadata now, source only if something has to be rebuilt from it. */
   findMetadataByToken(token: string): Promise<SubscriptionMetadata | null>
-  findSource(id: string): Promise<SubscriptionSource | null>
-  findArtifact(subscriptionId: string, target: TargetId): Promise<DeliveryArtifactMetadata | null>
+  /** Null if the source is missing or the subscription has advanced. */
+  findSource(id: string, version: number): Promise<SubscriptionSource | null>
+  /** Metadata is reusable only with an existing body and the requested current version. */
+  findArtifact(
+    subscriptionId: string,
+    target: TargetId,
+    version: number,
+  ): Promise<DeliveryArtifactMetadata | null>
   /**
-   * The artifact and its body, read together: separate reads could pair one recompile's digest with
-   * another's bytes. Null when the body is gone or unreadable, which is a cache miss, not a failure.
+   * The artifact and its body, read together at the requested current subscription version.
+   * Null on version mismatch or a missing body. Management previews use readSnapshot instead.
    */
-  readArtifact(subscriptionId: string, target: TargetId): Promise<DeliveryArtifact | null>
+  readArtifact(
+    subscriptionId: string,
+    target: TargetId,
+    version: number,
+  ): Promise<DeliveryArtifact | null>
+  /** Final origin access check after asynchronous compilation or cache reads. */
+  isCurrent(id: string, version: number, token: string): Promise<boolean>
   /** Writes only while the subscription still has the artifact's version. */
   saveArtifactIfCurrent(artifact: DeliveryArtifact, successAt: string): Promise<void>
   recordDelivery(

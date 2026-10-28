@@ -138,9 +138,9 @@ export function SubscriptionManager() {
     void navigate({ search: () => ({ mode: "create" }) })
   }
 
-  async function saveSubscription(draft: SubscriptionDraft, id?: string) {
+  async function saveSubscription(draft: SubscriptionDraft, id?: string, expectedVersion?: number) {
     try {
-      const credential = await save.mutateAsync({ draft, id })
+      const credential = await save.mutateAsync({ draft, id, expectedVersion })
       if (credential) actions.revealCredential(credential.url)
       return true
     } catch {

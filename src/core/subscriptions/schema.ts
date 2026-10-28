@@ -81,15 +81,27 @@ export function parseSubscriptionDraft(value: unknown): SubscriptionDraft {
 
 export function parseSubscriptionUpdate(current: SubscriptionDraft, value: unknown) {
   const input = asRecord(value) ?? fail("A subscription update must be an object.")
+  const { expectedVersion, ...patch } = input
+  if (
+    expectedVersion !== undefined &&
+    (typeof expectedVersion !== "number" ||
+      !Number.isSafeInteger(expectedVersion) ||
+      expectedVersion < 1)
+  ) {
+    fail("expectedVersion must be a positive safe integer.")
+  }
   const allowed = new Set(DRAFT_KEYS)
-  if (!Object.keys(input).some((key) => allowed.has(key)))
+  if (!Object.keys(patch).some((key) => allowed.has(key)))
     fail("The subscription update has no modifiable field.")
-  return parseSubscriptionDraft({
-    name: current.name,
-    source: current.source,
-    defaultTarget: current.defaultTarget,
-    processors: current.processors,
-    enabled: current.enabled,
-    ...input,
-  })
+  return {
+    expectedVersion,
+    draft: parseSubscriptionDraft({
+      name: current.name,
+      source: current.source,
+      defaultTarget: current.defaultTarget,
+      processors: current.processors,
+      enabled: current.enabled,
+      ...patch,
+    }),
+  }
 }

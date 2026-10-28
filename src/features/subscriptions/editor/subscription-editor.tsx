@@ -56,7 +56,7 @@ export function SubscriptionEditor({
 }: {
   onOpenChange: (open: boolean) => void
   onOpenChangeComplete?: (open: boolean) => void
-  onSave: (draft: SubscriptionDraft, id?: string) => Promise<boolean>
+  onSave: (draft: SubscriptionDraft, id?: string, expectedVersion?: number) => Promise<boolean>
   open: boolean
   values: EditorValues
 }) {
@@ -72,7 +72,7 @@ export function SubscriptionEditor({
         processors: value.processors,
         enabled: value.enabled,
       }
-      if (await onSave(draft, value.id)) onOpenChange(false)
+      if (await onSave(draft, value.id, value.expectedVersion)) onOpenChange(false)
     },
   })
 

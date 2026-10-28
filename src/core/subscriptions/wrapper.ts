@@ -1,6 +1,14 @@
 import type { CompileResult, TargetId } from "@/core/nodes"
 import { sha256Hex } from "./digest"
-import type { DeliveryArtifact, SubscriptionMetadata } from "./types"
+import type { DeliveryArtifact, DeliveryArtifactMetadata, SubscriptionMetadata } from "./types"
+
+// Bump when output compatibility changes. Older writers replace the whole ETag too, so their
+// output cannot accidentally retain the current marker during an overlapping deployment.
+const OUTPUT_FORMAT = "cuttle-v2"
+
+export function isCompatibleArtifact(artifact: DeliveryArtifactMetadata) {
+  return artifact.etag.startsWith(`"${OUTPUT_FORMAT}-`)
+}
 
 /**
  * The compiled document turned into the thing that is stored and served: its digest, how many nodes
@@ -22,7 +30,7 @@ export async function wrapArtifact(input: {
     subscriptionId: subscription.id,
     target,
     subscriptionVersion: subscription.version,
-    etag: `"${await sha256Hex(compiled.content)}"`,
+    etag: `"${OUTPUT_FORMAT}-${await sha256Hex(compiled.content)}"`,
     content: compiled.content,
     nodeCount: compiled.renderedNodes.length,
     responseHeaders,

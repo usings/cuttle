@@ -2,6 +2,7 @@ export const ADMIN_ERROR_CODES = [
   "invalid_request",
   "unauthorized",
   "not_found",
+  "conflict",
   "payload_too_large",
   "invalid_definition",
   "upstream_unavailable",

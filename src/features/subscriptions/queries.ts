@@ -77,9 +77,19 @@ export function useSaveSubscription() {
   const client = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ draft, id }: { draft: SubscriptionDraft; id?: string }): Promise<SaveResult> =>
+    mutationFn: ({
+      draft,
+      id,
+      expectedVersion,
+    }: {
+      draft: SubscriptionDraft
+      id?: string
+      expectedVersion?: number
+    }): Promise<SaveResult> =>
       id
-        ? discardResult(api.updateSubscription({ data: { id, patch: draft } }))
+        ? discardResult(
+            api.updateSubscription({ data: { id, patch: { ...draft, expectedVersion } } }),
+          )
         : api.createSubscription({ data: { draft } }),
     onSuccess: async (_result, { id }) => {
       await invalidateSubscriptions(client)
@@ -125,7 +135,13 @@ export function useSetSubscriptionEnabled() {
     }: {
       enabled: boolean
       subscription: SubscriptionSummary
-    }) => api.updateSubscription({ data: { id: subscription.id, patch: { enabled } } }),
+    }) =>
+      api.updateSubscription({
+        data: {
+          id: subscription.id,
+          patch: { enabled, expectedVersion: subscription.version },
+        },
+      }),
     onSuccess: async (_result, { enabled }) => {
       await invalidateSubscriptions(client)
       showSuccess(enabled ? "订阅已启用" : "订阅已停用")

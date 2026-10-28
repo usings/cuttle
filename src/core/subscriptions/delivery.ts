@@ -11,7 +11,7 @@ import type {
   SubscriptionDeliveryRepository,
   SubscriptionMetadata,
 } from "./types"
-import { wrapArtifact } from "./wrapper"
+import { isCompatibleArtifact, wrapArtifact } from "./wrapper"
 
 export const DEFAULT_FRESH_ARTIFACT_MS = 60_000
 const DEFAULT_MAX_STALE_MS = 7 * 24 * 60 * 60 * 1000
@@ -49,22 +49,41 @@ export class SubscriptionDelivery {
     this.resolveHost = options.resolveHost
   }
 
-  readSnapshot(id: string, target: TargetId) {
-    return this.repository.readArtifact(id, target)
-  }
-
   async deliver(
     token: string,
     target?: TargetId,
     knownEtag?: string | null,
   ): Promise<DeliveryOutcome> {
     if (!isPlausibleToken(token)) return { kind: "not-found" }
-    const subscription = await this.repository.findMetadataByToken(token)
-    if (!subscription) return { kind: "not-found" }
-    if (!subscription.enabled) return { kind: "disabled" }
+    // A changed definition invalidates the whole attempt, not only its cache write. Retry once
+    // against the original credential so a rotated token cannot acquire the new definition.
+    /* oxlint-disable no-await-in-loop -- Each retry must observe the previous attempt's invalidation. */
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const subscription = await this.repository.findMetadataByToken(token)
+      if (!subscription) return { kind: "not-found" }
+      if (!subscription.enabled) return { kind: "disabled" }
+      const outcome = await this.deliverVersion(subscription, target, knownEtag)
+      if (await this.repository.isCurrent(subscription.id, subscription.version, token))
+        return outcome
+    }
+    /* oxlint-enable no-await-in-loop */
+    return {
+      kind: "unavailable",
+      error: new Error("The subscription kept changing during delivery."),
+    }
+  }
 
+  private async deliverVersion(
+    subscription: SubscriptionMetadata,
+    target?: TargetId,
+    knownEtag?: string | null,
+  ): Promise<DeliveryOutcome> {
     const selectedTarget = target ?? subscription.defaultTarget
-    const cached = await this.repository.findArtifact(subscription.id, selectedTarget)
+    const cached = await this.repository.findArtifact(
+      subscription.id,
+      selectedTarget,
+      subscription.version,
+    )
     if (this.isReusable(cached, subscription)) {
       const reused = await this.serve(subscription, cached, knownEtag, false)
       if (reused) return { kind: "delivered", delivery: reused }
@@ -73,9 +92,14 @@ export class SubscriptionDelivery {
     const refreshed = await this.refresh(subscription, selectedTarget)
     if (refreshed.kind === "unavailable") {
       await this.recordFailure(subscription, refreshed.error)
-      const fallback = await this.repository.findArtifact(subscription.id, selectedTarget)
+      const fallback = await this.repository.findArtifact(
+        subscription.id,
+        selectedTarget,
+        subscription.version,
+      )
       if (
         fallback?.subscriptionVersion === subscription.version &&
+        isCompatibleArtifact(fallback) &&
         Date.now() - Date.parse(fallback.createdAt) < this.maxStaleMs
       ) {
         const served = await this.serve(subscription, fallback, knownEtag, true)
@@ -130,7 +154,7 @@ export class SubscriptionDelivery {
   ): Promise<
     { kind: "ready"; artifact: DeliveryArtifact } | { kind: "unavailable"; error: Error }
   > {
-    const source = await this.repository.findSource(subscription.id)
+    const source = await this.repository.findSource(subscription.id, subscription.version)
     if (!source) {
       return { kind: "unavailable", error: new Error("The subscription source is gone.") }
     }
@@ -143,7 +167,7 @@ export class SubscriptionDelivery {
       if (resolved.kind === "unavailable") return resolved
 
       const compiled = compileNodeList({
-        source: resolved.source.content,
+        source: resolved.source.contents,
         target,
         processors: subscription.processors,
       })
@@ -170,8 +194,14 @@ export class SubscriptionDelivery {
     stale: boolean,
   ): Promise<DeliveryResult | null> {
     if (artifact.etag === knownEtag) return { subscription, artifact, content: null, stale }
-    const read = await this.repository.readArtifact(subscription.id, artifact.target)
-    return read === null ? null : { subscription, artifact: read, content: read.content, stale }
+    const read = await this.repository.readArtifact(
+      subscription.id,
+      artifact.target,
+      subscription.version,
+    )
+    return read === null || !isCompatibleArtifact(read)
+      ? null
+      : { subscription, artifact: read, content: read.content, stale }
   }
 
   private isReusable(
@@ -180,6 +210,7 @@ export class SubscriptionDelivery {
   ): artifact is DeliveryArtifactMetadata {
     return (
       artifact?.subscriptionVersion === subscription.version &&
+      isCompatibleArtifact(artifact) &&
       Date.now() - Date.parse(artifact.createdAt) < this.freshArtifactMs
     )
   }

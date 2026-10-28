@@ -93,8 +93,7 @@ function useNodePreview(subscription: SubscriptionSummary, wanted: boolean): Nod
   )
   const {
     data: answer,
-    error: workerError,
-    isSupported,
+    isAvailable,
     post,
   } = useWebWorker<InspectRequest, InspectResponse>(createInspectWorker)
   // Keyed on the snapshot it came from, by reference: an answer that arrives after a refetch has
@@ -107,16 +106,16 @@ function useNodePreview(subscription: SubscriptionSummary, wanted: boolean): Nod
   // render rather than pushed into state by an effect: with nothing asynchronous to wait for, the
   // answer is a function of the snapshot, and state would only re-render to say what render knew.
   const onThisThread = useMemo(
-    () => (isSupported || !snapshot ? null : inspectSnapshot(snapshot.content)),
-    [isSupported, snapshot],
+    () => (isAvailable || !snapshot ? null : inspectSnapshot(snapshot.content)),
+    [isAvailable, snapshot],
   )
 
   useEffect(() => {
-    if (!snapshot || !isSupported) return
+    if (!snapshot || !isAvailable) return
     nextId.current += 1
     posted.current = { from: snapshot, id: nextId.current }
     post({ content: snapshot.content, id: nextId.current })
-  }, [isSupported, post, snapshot])
+  }, [isAvailable, post, snapshot])
 
   useEffect(() => {
     const request = posted.current
@@ -125,7 +124,6 @@ function useNodePreview(subscription: SubscriptionSummary, wanted: boolean): Nod
   }, [answer])
 
   if (failure) return { status: "failed", message: failure.message }
-  if (workerError) return { status: "failed", message: workerError }
   if (!loaded) return { status: "loading" }
   if (!snapshot) return { status: "empty" }
   const preview = onThisThread ? { from: snapshot, result: onThisThread } : parsed

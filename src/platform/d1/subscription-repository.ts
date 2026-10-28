@@ -24,26 +24,25 @@ export class D1SubscriptionRepository
 {
   constructor(private readonly database: D1Database) {}
 
-  private async source(subscriptionId: string) {
+  private async source(subscriptionId: string, version: number) {
     let result: D1Result<ContentChunkRow>
     try {
       result = await this.database
         .prepare(
           `SELECT content FROM subscription_source_chunks
-           WHERE subscription_id = ? ORDER BY chunk_index ASC`,
+           WHERE subscription_id = ?
+             AND EXISTS (
+               SELECT 1 FROM subscriptions WHERE id = ? AND version = ?
+             )
+           ORDER BY chunk_index ASC`,
         )
-        .bind(subscriptionId)
+        .bind(subscriptionId, subscriptionId, version)
         .all<ContentChunkRow>()
     } catch (error) {
       throw new Error(`Unable to read source for subscription ${subscriptionId}.`, { cause: error })
     }
     if (result.results.length === 0) return null
     return fromChunks(result.results)
-  }
-
-  private async record(row: SubscriptionRow | null) {
-    if (!row) return null
-    return recordFromRow(row, (await this.source(row.id)) ?? "")
   }
 
   private sourceChunkStatements(subscriptionId: string, chunks: string[]) {
@@ -64,17 +63,34 @@ export class D1SubscriptionRepository
     return row ? metadataFromRow(row) : null
   }
 
-  async findSource(id: string) {
-    const json = await this.source(id)
+  async findSource(id: string, version: number) {
+    const json = await this.source(id, version)
     return json ? sourceFromJson(id, json) : null
   }
 
   async findById(id: string) {
+    // Metadata and chunks must describe one committed record, including for PATCH's base value.
+    const [metadata, chunks] = await this.database.batch([
+      this.database
+        .prepare(`SELECT ${SUBSCRIPTION_COLUMNS} FROM subscriptions WHERE id = ?`)
+        .bind(id),
+      this.database
+        .prepare(`SELECT content FROM subscription_source_chunks
+        WHERE subscription_id = ? ORDER BY chunk_index ASC`)
+        .bind(id),
+    ])
+    const row = (metadata.results as SubscriptionRow[])[0]
+    if (!row) return null
+    return recordFromRow(row, fromChunks(chunks.results as ContentChunkRow[]))
+  }
+
+  async isCurrent(id: string, version: number, token: string) {
     const row = await this.database
-      .prepare(`SELECT ${SUBSCRIPTION_COLUMNS} FROM subscriptions WHERE id = ?`)
-      .bind(id)
-      .first<SubscriptionRow>()
-    return this.record(row)
+      .prepare(`SELECT 1 FROM subscriptions
+      WHERE id = ? AND version = ? AND token_hash = ? AND enabled = 1`)
+      .bind(id, version, await hashToken(token))
+      .first()
+    return row !== null
   }
 
   async list() {
@@ -122,40 +138,55 @@ export class D1SubscriptionRepository
     ])
   }
 
-  async update(subscription: SubscriptionRecord) {
-    const exists = await this.database
-      .prepare("SELECT id FROM subscriptions WHERE id = ?")
-      .bind(subscription.id)
-      .first<{ id: string }>()
-    if (!exists) throw new Error(`Subscription ${subscription.id} disappeared during update.`)
+  async update(subscription: SubscriptionRecord, expectedVersion: number) {
+    if (subscription.version !== expectedVersion + 1) {
+      throw new Error("An update must advance the expected subscription version by one.")
+    }
     const chunks = toChunks(JSON.stringify(subscription.source))
-    await this.database.batch([
-      this.database
-        .prepare(
-          `UPDATE subscriptions SET
-             name = ?, source_type = ?, default_target = ?, processors_json = ?, enabled = ?,
-             version = ?, updated_at = ?, last_error = ?
-           WHERE id = ?`,
-        )
-        .bind(
-          subscription.name,
-          subscription.source.type,
-          subscription.defaultTarget,
-          subscription.processors ? JSON.stringify(subscription.processors) : null,
-          subscription.enabled ? 1 : 0,
-          subscription.version,
-          subscription.updatedAt,
-          subscription.lastError ?? null,
-          subscription.id,
+    try {
+      // The version trigger rejects a stale writer and rolls back this whole batch. Checking only
+      // the UPDATE's affected rows would leave the following source/cache writes unprotected.
+      const [updated] = await this.database.batch([
+        this.database
+          .prepare(
+            `UPDATE subscriptions SET
+               name = ?, source_type = ?, default_target = ?, processors_json = ?, enabled = ?,
+               version = ?, updated_at = ?, last_error = ?
+             WHERE id = ?`,
+          )
+          .bind(
+            subscription.name,
+            subscription.source.type,
+            subscription.defaultTarget,
+            subscription.processors ? JSON.stringify(subscription.processors) : null,
+            subscription.enabled ? 1 : 0,
+            subscription.version,
+            subscription.updatedAt,
+            subscription.lastError ?? null,
+            subscription.id,
+          ),
+        this.database
+          .prepare("DELETE FROM subscription_source_chunks WHERE subscription_id = ?")
+          .bind(subscription.id),
+        ...chunks.map((content, index) =>
+          this.database
+            .prepare(
+              `INSERT INTO subscription_source_chunks (subscription_id, chunk_index, content)
+               SELECT ?, ?, ? FROM subscriptions WHERE id = ?`,
+            )
+            .bind(subscription.id, index, content, subscription.id),
         ),
-      this.database
-        .prepare("DELETE FROM subscription_source_chunks WHERE subscription_id = ?")
-        .bind(subscription.id),
-      ...this.sourceChunkStatements(subscription.id, chunks),
-      this.database
-        .prepare("DELETE FROM compiled_artifacts WHERE subscription_id = ?")
-        .bind(subscription.id),
-    ])
+        this.database
+          .prepare("DELETE FROM compiled_artifacts WHERE subscription_id = ?")
+          .bind(subscription.id),
+      ])
+      return updated.meta.changes > 0 ? "updated" : "not-found"
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("subscription_version_conflict")) {
+        return "conflict"
+      }
+      throw error
+    }
   }
 
   async rotateToken(id: string, token: string, tokenHint: string, updatedAt: string) {
@@ -176,23 +207,47 @@ export class D1SubscriptionRepository
     return result.meta.changes > 0
   }
 
-  async findArtifact(subscriptionId: string, target: TargetId) {
+  async findArtifact(subscriptionId: string, target: TargetId, version: number) {
     const row = await this.database
       .prepare(
-        `SELECT ${ARTIFACT_COLUMNS} FROM compiled_artifacts WHERE subscription_id = ? AND target = ?`,
+        `SELECT ${ARTIFACT_COLUMNS} FROM compiled_artifacts
+         WHERE subscription_id = ? AND target = ?
+           AND subscription_version = ?
+             AND EXISTS (SELECT 1 FROM subscriptions WHERE id = ? AND version = ?)
+             AND EXISTS (SELECT 1 FROM compiled_artifact_chunks
+               WHERE subscription_id = ? AND target = ?)
+           `,
       )
-      .bind(subscriptionId, target)
+      .bind(subscriptionId, target, version, subscriptionId, version, subscriptionId, target)
       .first<ArtifactRow>()
     return row ? artifactFromRow(row) : null
   }
 
-  async readArtifact(subscriptionId: string, target: TargetId) {
+  readSnapshot(subscriptionId: string, target: TargetId) {
+    return this.readStoredArtifact(subscriptionId, target)
+  }
+
+  readArtifact(subscriptionId: string, target: TargetId, version: number) {
+    return this.readStoredArtifact(subscriptionId, target, version)
+  }
+
+  private async readStoredArtifact(subscriptionId: string, target: TargetId, version?: number) {
     const [row, chunks] = await this.database.batch([
       this.database
         .prepare(
-          `SELECT ${ARTIFACT_COLUMNS} FROM compiled_artifacts WHERE subscription_id = ? AND target = ?`,
+          `SELECT ${ARTIFACT_COLUMNS} FROM compiled_artifacts
+           WHERE subscription_id = ? AND target = ?
+             AND (? IS NULL OR (subscription_version = ?
+               AND EXISTS (SELECT 1 FROM subscriptions WHERE id = ? AND version = ?)))`,
         )
-        .bind(subscriptionId, target),
+        .bind(
+          subscriptionId,
+          target,
+          version ?? null,
+          version ?? null,
+          subscriptionId,
+          version ?? null,
+        ),
       this.database
         .prepare(
           `SELECT content FROM compiled_artifact_chunks

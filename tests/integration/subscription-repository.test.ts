@@ -1,156 +1,98 @@
 import { env } from "cloudflare:workers"
-import { describe, expect, test } from "vitest"
-import type { DeliveryArtifact, SubscriptionRecord, SubscriptionSource } from "@/core/subscriptions"
-import { D1SubscriptionRepository } from "@/platform/d1/subscription-repository"
+import { afterEach, describe, expect, test } from "vitest"
+import { artifactFixture, NODE_URI, subscriptionStore } from "../support/subscriptions"
 
-const TARGET = "clash"
+const store = subscriptionStore(env.DB)
+const { repository } = store
 
-// Storage is shared across the tests in this file, so every case owns a distinct subscription.
-function subscription(id: string, overrides: Partial<SubscriptionRecord> = {}): SubscriptionRecord {
-  return {
-    id,
-    tokenHint: "wxyz",
-    name: "primary",
-    source: { type: "remote", urls: ["https://example.com/sub?token=upstream-secret"] },
-    defaultTarget: TARGET,
-    enabled: true,
-    version: 1,
-    createdAt: "2026-01-01T00:00:00.000Z",
-    updatedAt: "2026-01-01T00:00:00.000Z",
-    ...overrides,
-  }
-}
+afterEach(() => store.cleanup())
 
-function artifact(
-  subscriptionId: string,
-  overrides: Partial<DeliveryArtifact> = {},
-): DeliveryArtifact {
-  return {
-    subscriptionId,
-    target: TARGET,
-    subscriptionVersion: 1,
-    etag: '"v1"',
-    nodeCount: 3,
-    responseHeaders: { "subscription-userinfo": "upload=1" },
-    createdAt: "2026-01-01T00:00:00.000Z",
-    content: "proxies: []\n",
-    ...overrides,
-  }
-}
-
-async function seeded(id: string, overrides: Partial<SubscriptionRecord> = {}) {
-  const repository = new D1SubscriptionRepository(env.DB)
-  const record = subscription(id, overrides)
-  await repository.create(record, `token-for-${id}`)
-  return { repository, record }
-}
-
-function countRows(table: string, subscriptionId: string) {
-  return env.DB.prepare(`SELECT count(*) AS n FROM ${table} WHERE subscription_id = ?`)
-    .bind(subscriptionId)
-    .first<{ n: number }>()
-    .then((row) => row?.n ?? 0)
-}
-
-function storedContent(table: string, subscriptionId: string) {
-  return env.DB.prepare(
-    `SELECT content FROM ${table} WHERE subscription_id = ? AND chunk_index = 0`,
-  )
-    .bind(subscriptionId)
-    .first<{ content: string }>()
-    .then((row) => row?.content)
-}
-
-describe("the subscription source in D1", () => {
-  test("a created subscription reads its source back", async () => {
-    const { repository, record } = await seeded("sub-read")
-
+describe("persisted subscription and artifact contracts", () => {
+  test.each([
+    ["short ASCII", "small content"],
+    ["large ordered Unicode", `${"甲".repeat(131071)}😀${"乙".repeat(140000)}尾`],
+  ])("preserves %s sources and artifacts through D1", async (_name, content) => {
+    const { record, token } = await store.seed({ source: { type: "raw", content } })
+    const saved = artifactFixture(record.id, { content })
+    await repository.saveArtifactIfCurrent(saved, saved.createdAt)
     const found = await repository.findById(record.id)
-    expect(found?.source).toStrictEqual(record.source)
-    expect(await repository.findSource(record.id)).toStrictEqual(record.source)
+    expect(found?.source).toStrictEqual({ type: "raw", content })
+    expect(await repository.findSource(record.id, record.version)).toStrictEqual({
+      type: "raw",
+      content,
+    })
+    expect(await repository.readSnapshot(record.id, "surge")).toStrictEqual(saved)
+    expect(await repository.findMetadataByToken(token)).toMatchObject({ id: record.id, version: 1 })
+    expect(await repository.findMetadataByToken("unrelated credential")).toBeNull()
   })
 
-  test("the stored column holds the source verbatim", async () => {
-    const { record } = await seeded("sub-verbatim")
-
-    expect(await storedContent("subscription_source_chunks", record.id)).toBe(
-      JSON.stringify(record.source),
+  test("replacing a large source invalidates all previously compiled output", async () => {
+    const { record } = await store.seed({ source: { type: "raw", content: "old".repeat(100000) } })
+    await repository.saveArtifactIfCurrent(artifactFixture(record.id), record.createdAt)
+    await repository.saveArtifactIfCurrent(
+      artifactFixture(record.id, { target: "uri" }),
+      record.createdAt,
     )
-  })
-
-  test("a source larger than one column spans rows and rejoins", async () => {
-    const source: SubscriptionSource = { type: "raw", content: "x".repeat(200_000) }
-    const { repository, record } = await seeded("sub-large", { source })
-
-    expect(await countRows("subscription_source_chunks", record.id)).toBeGreaterThan(1)
-    expect(await repository.findSource(record.id)).toStrictEqual(source)
-  })
-
-  test("an update replaces the previous rows instead of appending to them", async () => {
-    const { repository } = await seeded("sub-update", {
-      source: { type: "raw", content: "y".repeat(200_000) },
+    expect(
+      await repository.update(
+        { ...record, version: 2, source: { type: "raw", content: NODE_URI } },
+        1,
+      ),
+    ).toBe("updated")
+    expect(await repository.findSource(record.id, 1)).toBeNull()
+    expect(await repository.findSource(record.id, 2)).toStrictEqual({
+      type: "raw",
+      content: NODE_URI,
     })
-    const replaced = subscription("sub-update", {
-      source: { type: "raw", content: "short" },
-      version: 2,
-      updatedAt: "2026-01-02T00:00:00.000Z",
-    })
-    await repository.update(replaced)
-
-    expect(await countRows("subscription_source_chunks", replaced.id)).toBe(1)
-    expect(await repository.findSource(replaced.id)).toStrictEqual(replaced.source)
-  })
-})
-
-describe("the compiled artifact cache in D1", () => {
-  test("a saved artifact reads its body back", async () => {
-    const { repository, record } = await seeded("sub-artifact")
-    const cached = artifact(record.id)
-    await repository.saveArtifactIfCurrent(cached, "2026-01-01T00:00:01.000Z")
-
-    const read = await repository.readArtifact(record.id, TARGET)
-    expect(read?.content).toBe(cached.content)
-    expect(read?.nodeCount).toBe(cached.nodeCount)
-    expect(read?.etag).toBe(cached.etag)
+    const removed = await env.DB.batch([
+      env.DB.prepare("SELECT count(*) AS n FROM compiled_artifacts WHERE subscription_id = ?").bind(
+        record.id,
+      ),
+      env.DB.prepare(
+        "SELECT count(*) AS n FROM compiled_artifact_chunks WHERE subscription_id = ?",
+      ).bind(record.id),
+    ])
+    expect(removed.map((result) => result.results)).toStrictEqual([[{ n: 0 }], [{ n: 0 }]])
   })
 
-  test("the stored column holds the body verbatim", async () => {
-    const { repository, record } = await seeded("sub-body")
-    const cached = artifact(record.id)
-    await repository.saveArtifactIfCurrent(cached, "2026-01-01T00:00:01.000Z")
-
-    expect(await storedContent("compiled_artifact_chunks", record.id)).toBe(cached.content)
+  test("a late compilation cannot overwrite the current version's artifact", async () => {
+    const { record } = await store.seed({ version: 2 })
+    const current = artifactFixture(record.id, { subscriptionVersion: 2, content: "current" })
+    await repository.saveArtifactIfCurrent(current, current.createdAt)
+    await repository.saveArtifactIfCurrent(
+      artifactFixture(record.id, { content: "obsolete" }),
+      record.createdAt,
+    )
+    expect(await repository.readSnapshot(record.id, "surge")).toStrictEqual(current)
   })
 
-  test("a body larger than one column spans rows and rejoins", async () => {
-    const { repository, record } = await seeded("sub-large-body")
-    const cached = artifact(record.id, { content: "z".repeat(200_000) })
-    await repository.saveArtifactIfCurrent(cached, "2026-01-01T00:00:01.000Z")
-
-    expect(await countRows("compiled_artifact_chunks", record.id)).toBeGreaterThan(1)
-    const read = await repository.readArtifact(record.id, TARGET)
-    expect(read?.content).toBe(cached.content)
-  })
-
-  test("metadata left without a body is a cache miss, not a failure", async () => {
-    const { repository, record } = await seeded("sub-cache-miss")
-    await repository.saveArtifactIfCurrent(artifact(record.id), "2026-01-01T00:00:01.000Z")
+  test("a missing cache body is recoverable as a cache miss", async () => {
+    const { record } = await store.seed()
+    await repository.saveArtifactIfCurrent(artifactFixture(record.id), record.createdAt)
     await env.DB.prepare("DELETE FROM compiled_artifact_chunks WHERE subscription_id = ?")
       .bind(record.id)
       .run()
-
-    expect(await repository.readArtifact(record.id, TARGET)).toBeNull()
-    expect(await repository.findArtifact(record.id, TARGET)).not.toBeNull()
+    expect(await repository.readSnapshot(record.id, "surge")).toBeNull()
   })
 
-  test("an artifact for a superseded version is not written", async () => {
-    const { repository, record } = await seeded("sub-stale", { version: 2 })
-    await repository.saveArtifactIfCurrent(
-      artifact(record.id, { subscriptionVersion: 1 }),
-      "2026-01-01T00:00:01.000Z",
-    )
-
-    expect(await repository.readArtifact(record.id, TARGET)).toBeNull()
-    expect(await countRows("compiled_artifact_chunks", record.id)).toBe(0)
+  test("rotation replaces only the credential; deletion removes the subscription's stored data", async () => {
+    const { record, token } = await store.seed()
+    await repository.saveArtifactIfCurrent(artifactFixture(record.id), record.createdAt)
+    const rotated = crypto.randomUUID()
+    expect(
+      await repository.rotateToken(record.id, rotated, rotated.slice(-8), record.updatedAt),
+    ).toBe(true)
+    expect(await repository.findMetadataByToken(token)).toBeNull()
+    expect(await repository.findMetadataByToken(rotated)).toMatchObject({
+      id: record.id,
+      version: 1,
+    })
+    expect(await repository.findSource(record.id, record.version)).toStrictEqual(record.source)
+    expect(await repository.delete(record.id)).toBe(true)
+    expect(await repository.findById(record.id)).toBeNull()
+    expect(await repository.findSource(record.id, record.version)).toBeNull()
+    expect(await repository.readSnapshot(record.id, "surge")).toBeNull()
+    expect(await repository.findMetadataByToken(rotated)).toBeNull()
+    expect(await repository.delete(record.id)).toBe(false)
   })
 })
