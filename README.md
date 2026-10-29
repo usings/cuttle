@@ -2,8 +2,6 @@
   <img src="assets/home.png" alt="Cuttle：节点来源、规则链和转换结果" width="100%">
 </p>
 
-# Cuttle
-
 Cuttle 将代理节点或订阅内容转换为不同客户端的节点格式，运行在你自己的 Cloudflare Workers 和 D1 上。直接粘贴文本即可转换；连接管理密钥后，可以读取远程来源并保存长期订阅。
 
 [使用指南](#使用指南) · [自托管部署](#自托管部署) · [API](docs/api.md) · [本地开发与测试](docs/development.md)
@@ -13,8 +11,6 @@ Cuttle 将代理节点或订阅内容转换为不同客户端的节点格式，�
 ### 输入与协议
 
 支持节点 URI、Base64 订阅、SSD、Clash / Mihomo YAML、sing-box JSON、Xray / V2Ray JSON，以及 Surge、Loon、Quantumult X 和 Egern 节点内容。HTML 页面会被报告为无效来源。
-
-sing-box JSON 以 `tls.enabled: true` 表示开启 TLS；省略 `tls` 或 `enabled` 不会自动启用 TLS。
 
 远程来源可以填写多个链接，用换行或 `|` 分隔。各来源分别解析，按填写顺序合并节点，再执行一次完整规则链；多个来源可以使用不同格式。
 
